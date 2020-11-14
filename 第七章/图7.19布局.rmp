@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<process version="5.3.013">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="5.3.013" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="read_clustering" compatibility="5.3.013" expanded="true" height="60" name="读入聚类模型" width="90" x="447" y="30">
+        <parameter key="cluster_model_file" value="C:\du-work\商业智能\Chapter5\visit_clustering.clm"/>
+        <parameter key="is_hierarchical_model_file" value="false"/>
+      </operator>
+      <operator activated="true" class="read_csv" compatibility="5.3.013" expanded="true" height="60" name="读入访问事件测试记录" width="90" x="447" y="120">
+        <parameter key="csv_file" value="C:\du-work\商业智能\Chapter5\customer_1.csv"/>
+        <parameter key="column_separators" value=";"/>
+        <parameter key="trim_lines" value="false"/>
+        <parameter key="use_quotes" value="true"/>
+        <parameter key="quotes_character" value="&quot;"/>
+        <parameter key="escape_character" value="\"/>
+        <parameter key="skip_comments" value="false"/>
+        <parameter key="comment_characters" value="#"/>
+        <parameter key="parse_numbers" value="true"/>
+        <parameter key="decimal_character" value="."/>
+        <parameter key="grouped_digits" value="false"/>
+        <parameter key="grouping_character" value=","/>
+        <parameter key="date_format" value=""/>
+        <parameter key="first_row_as_names" value="false"/>
+        <list key="annotations">
+          <parameter key="0" value="Name"/>
+        </list>
+        <parameter key="time_zone" value="SYSTEM"/>
+        <parameter key="locale" value="English (United States)"/>
+        <parameter key="encoding" value="GBK"/>
+        <list key="data_set_meta_data_information">
+          <parameter key="0" value="Page_/adventure/adventure\.htm.true.binominal.attribute"/>
+          <parameter key="1" value="Page_/adventure/battyman\.htm.true.binominal.attribute"/>
+          <parameter key="2" value="Page_/adventure/bigmaze\.htm.true.binominal.attribute"/>
+          <parameter key="3" value="Page_/adventure/hardrider\.htm.true.binominal.attribute"/>
+          <parameter key="4" value="Page_/adventure/lighteningball\.htm.true.binominal.attribute"/>
+          <parameter key="5" value="Page_/children/bogustheclown\.htm.true.binominal.attribute"/>
+          <parameter key="6" value="Page_/children/children\.htm.true.binominal.attribute"/>
+          <parameter key="7" value="Page_/children/thebuppets\.htm.true.binominal.attribute"/>
+          <parameter key="8" value="Page_/children/thebuppetsgotolondon\.htm.true.binominal.attribute"/>
+          <parameter key="9" value="Page_/drama/drama\.htm.true.binominal.attribute"/>
+          <parameter key="10" value="Page_/drama/frenchpatient\.htm.true.binominal.attribute"/>
+          <parameter key="11" value="Page_/drama/rebelwithoutaclue\.htm.true.binominal.attribute"/>
+          <parameter key="12" value="Page_/drama/thefourthman\.htm.true.binominal.attribute"/>
+          <parameter key="13" value="Page_/drama/theipfile\.htm.true.binominal.attribute"/>
+          <parameter key="14" value="Page_/drama/theninerules\.htm.true.binominal.attribute"/>
+          <parameter key="15" value="Page_/drama/thetempest\.htm.true.binominal.attribute"/>
+          <parameter key="16" value="Page_/drama/tokillacanary\.htm.true.binominal.attribute"/>
+          <parameter key="17" value="Page_/horror/astabinthedark\.htm.true.binominal.attribute"/>
+          <parameter key="18" value="Page_/horror/bigthingswithteeth\.htm.true.binominal.attribute"/>
+          <parameter key="19" value="Page_/horror/bigthingswithteeth2\.htm.true.binominal.attribute"/>
+          <parameter key="20" value="Page_/horror/blobby\.htm.true.binominal.attribute"/>
+          <parameter key="21" value="Page_/horror/dracula\.htm.true.binominal.attribute"/>
+          <parameter key="22" value="Page_/horror/horror\.htm.true.binominal.attribute"/>
+          <parameter key="23" value="Page_/horror/invasionofthebabysnatchers\.htm.true.binominal.attribute"/>
+          <parameter key="24" value="Page_/horror/mommy\.htm.true.binominal.attribute"/>
+          <parameter key="25" value="Page_/horror/psychic\.htm.true.binominal.attribute"/>
+          <parameter key="26" value="Page_/humour/apework\.htm.true.binominal.attribute"/>
+          <parameter key="27" value="Page_/humour/brianwho\.htm.true.binominal.attribute"/>
+          <parameter key="28" value="Page_/humour/coldleggedlarry\.htm.true.binominal.attribute"/>
+          <parameter key="29" value="Page_/humour/comedy\.htm.true.binominal.attribute"/>
+          <parameter key="30" value="Page_/humour/droddbloke\.htm.true.binominal.attribute"/>
+          <parameter key="31" value="Page_/humour/fetchelavache\.htm.true.binominal.attribute"/>
+          <parameter key="32" value="Page_/humour/galaxyrequest\.htm.true.binominal.attribute"/>
+          <parameter key="33" value="Page_/humour/helicopter\.htm.true.binominal.attribute"/>
+          <parameter key="34" value="Page_/humour/mrbob\.htm.true.binominal.attribute"/>
+          <parameter key="35" value="Page_/humour/pheasantsoup\.htm.true.binominal.attribute"/>
+          <parameter key="36" value="Page_/humour/redleopard\.htm.true.binominal.attribute"/>
+          <parameter key="37" value="Page_/humour/sirens\.htm.true.binominal.attribute"/>
+          <parameter key="38" value="Page_/humour/spookbusters\.htm.true.binominal.attribute"/>
+          <parameter key="39" value="Page_/humour/thenoisyman\.htm.true.binominal.attribute"/>
+          <parameter key="40" value="Page_/humour/thepittsburghstory\.htm.true.binominal.attribute"/>
+          <parameter key="41" value="Page_/humour/thiswastinnysap\.htm.true.binominal.attribute"/>
+          <parameter key="42" value="Page_/humour/waheymonty\.htm.true.binominal.attribute"/>
+          <parameter key="43" value="Page_/musical/cryinintherain\.htm.true.binominal.attribute"/>
+          <parameter key="44" value="Page_/musical/marypoppout\.htm.true.binominal.attribute"/>
+          <parameter key="45" value="Page_/musical/meandtheking\.htm.true.binominal.attribute"/>
+          <parameter key="46" value="Page_/musical/menandwomen\.htm.true.binominal.attribute"/>
+          <parameter key="47" value="Page_/musical/musical\.htm.true.binominal.attribute"/>
+          <parameter key="48" value="Page_/musical/myblondelady\.htm.true.binominal.attribute"/>
+          <parameter key="49" value="Page_/musical/rockythehorror\.htm.true.binominal.attribute"/>
+          <parameter key="50" value="Page_/musical/theatrebus\.htm.true.binominal.attribute"/>
+          <parameter key="51" value="Page_/sci_fi/5by5\.htm.true.binominal.attribute"/>
+          <parameter key="52" value="Page_/sci_fi/absolutememory\.htm.true.binominal.attribute"/>
+          <parameter key="53" value="Page_/sci_fi/destroyer\.htm.true.binominal.attribute"/>
+          <parameter key="54" value="Page_/sci_fi/fourthofjuly\.htm.true.binominal.attribute"/>
+          <parameter key="55" value="Page_/sci_fi/godzilla\.htm.true.binominal.attribute"/>
+          <parameter key="56" value="Page_/sci_fi/hunter\.htm.true.binominal.attribute"/>
+          <parameter key="57" value="Page_/sci_fi/scifi\.htm.true.binominal.attribute"/>
+          <parameter key="58" value="Page_/western/badtvsoap\.htm.true.binominal.attribute"/>
+          <parameter key="59" value="Page_/western/clutchbassidyandthecundancekid\.htm.true.binominal.attribute"/>
+          <parameter key="60" value="Page_/western/howtheeastwaslost\.htm.true.binominal.attribute"/>
+          <parameter key="61" value="Page_/western/lowmidnight\.htm.true.binominal.attribute"/>
+          <parameter key="62" value="Page_/western/lowplainsofficeworker\.htm.true.binominal.attribute"/>
+          <parameter key="63" value="Page_/western/redstream\.htm.true.binominal.attribute"/>
+          <parameter key="64" value="Page_/western/shawn\.htm.true.binominal.attribute"/>
+          <parameter key="65" value="Page_/western/theaveragesix\.htm.true.binominal.attribute"/>
+          <parameter key="66" value="Page_/western/thefinders\.htm.true.binominal.attribute"/>
+          <parameter key="67" value="Page_/western/thenicenotsoniceandthevisuallychallenged\.htm.true.binominal.attribute"/>
+          <parameter key="68" value="Page_/western/truesalt\.htm.true.binominal.attribute"/>
+          <parameter key="69" value="Page_/western/western\.htm.true.binominal.attribute"/>
+          <parameter key="70" value="Page_actorssearch\.asp.true.binominal.attribute"/>
+          <parameter key="71" value="Page_bargin\.asp.true.binominal.attribute"/>
+          <parameter key="72" value="Page_confirm\.asp.true.binominal.attribute"/>
+          <parameter key="73" value="Page_error\.asp.true.binominal.attribute"/>
+          <parameter key="74" value="Page_genresearch\.asp.true.binominal.attribute"/>
+          <parameter key="75" value="Page_keyword_search\.asp.true.binominal.attribute"/>
+          <parameter key="76" value="Page_login\.asp.true.binominal.attribute"/>
+          <parameter key="77" value="Page_main\.htm.true.binominal.attribute"/>
+          <parameter key="78" value="Page_personal\.asp.true.binominal.attribute"/>
+          <parameter key="79" value="Page_purchase\.asp.true.binominal.attribute"/>
+          <parameter key="80" value="Page_register\.asp.true.binominal.attribute"/>
+          <parameter key="81" value="Page_splash\.htm.true.binominal.attribute"/>
+          <parameter key="82" value="referer_search\.whatever\.com.true.binominal.attribute"/>
+          <parameter key="83" value="referer_search\.whatever2\.com.true.binominal.attribute"/>
+          <parameter key="84" value="referer_www\.amdramandrada\.com.true.binominal.attribute"/>
+          <parameter key="85" value="referer_www\.ask_boris\.com.true.binominal.attribute"/>
+          <parameter key="86" value="referer_www\.comedyhomedy\.com.true.binominal.attribute"/>
+          <parameter key="87" value="referer_www\.freakngeek\.com.true.binominal.attribute"/>
+          <parameter key="88" value="referer_www\.homebirdsong\.com.true.binominal.attribute"/>
+          <parameter key="89" value="referer_www\.horror82\.com.true.binominal.attribute"/>
+          <parameter key="90" value="referer_www\.hunter15bargain\.com.true.binominal.attribute"/>
+          <parameter key="91" value="referer_www\.now_thats_what_i_call_a_search_engine7\.com.true.binominal.attribute"/>
+          <parameter key="92" value="referer_www\.online_information_for_everyone\.co\.uk.true.binominal.attribute"/>
+          <parameter key="93" value="referer_www\.randomreferer1\.com.true.binominal.attribute"/>
+          <parameter key="94" value="referer_www\.randomreferer2\.com.true.binominal.attribute"/>
+          <parameter key="95" value="referer_www\.randomreferer3\.com.true.binominal.attribute"/>
+          <parameter key="96" value="referer_www\.randomreferer4\.com.true.binominal.attribute"/>
+          <parameter key="97" value="referer_www\.rebellost\.com.true.binominal.attribute"/>
+          <parameter key="98" value="referer_www\.sistersite12\.com.true.binominal.attribute"/>
+          <parameter key="99" value="referer_www\.sistersite15\.com.true.binominal.attribute"/>
+          <parameter key="100" value="referer_www\.the_end_of_the_internet\.org.true.binominal.attribute"/>
+          <parameter key="101" value="referer_www\.thegrittyduke\.com.true.binominal.attribute"/>
+          <parameter key="102" value="referer_www\.where_did_you_last_see_it\.co\.uk.true.binominal.attribute"/>
+          <parameter key="103" value="referer_www\.youngpersons\.com.true.binominal.attribute"/>
+          <parameter key="104" value="first_dir_adventure.true.binominal.attribute"/>
+          <parameter key="105" value="first_dir_children.true.binominal.attribute"/>
+          <parameter key="106" value="first_dir_drama.true.binominal.attribute"/>
+          <parameter key="107" value="first_dir_horror.true.binominal.attribute"/>
+          <parameter key="108" value="first_dir_humour.true.binominal.attribute"/>
+          <parameter key="109" value="first_dir_musical.true.binominal.attribute"/>
+          <parameter key="110" value="first_dir_sci_fi.true.binominal.attribute"/>
+          <parameter key="111" value="first_dir_western.true.binominal.attribute"/>
+        </list>
+        <parameter key="read_not_matching_values_as_missings" value="true"/>
+        <parameter key="datamanagement" value="double_array"/>
+      </operator>
+      <operator activated="true" class="map" compatibility="5.3.013" expanded="true" height="76" name="F/T转换为0/1符号" width="90" x="581" y="120">
+        <parameter key="attribute_filter_type" value="all"/>
+        <parameter key="attribute" value=""/>
+        <parameter key="attributes" value=""/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="attribute_value"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="time"/>
+        <parameter key="block_type" value="attribute_block"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="value_matrix_row_start"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+        <list key="value_mappings">
+          <parameter key="F" value="0"/>
+          <parameter key="T" value="1"/>
+        </list>
+        <parameter key="consider_regular_expressions" value="false"/>
+        <parameter key="add_default_mapping" value="false"/>
+      </operator>
+      <operator activated="true" class="parse_numbers" compatibility="5.3.013" expanded="true" height="76" name="0/1数值化" width="90" x="715" y="120">
+        <parameter key="attribute_filter_type" value="all"/>
+        <parameter key="attribute" value=""/>
+        <parameter key="attributes" value=""/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="nominal"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="file_path"/>
+        <parameter key="block_type" value="single_value"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="single_value"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+        <parameter key="decimal_character" value="."/>
+        <parameter key="grouped_digits" value="false"/>
+        <parameter key="grouping_character" value=","/>
+      </operator>
+      <operator activated="true" class="apply_model" compatibility="5.3.013" expanded="true" height="76" name="应用聚类模型" width="90" x="715" y="30">
+        <list key="application_parameters"/>
+        <parameter key="create_view" value="false"/>
+      </operator>
+      <operator activated="true" class="select_attributes" compatibility="5.3.013" expanded="true" height="76" name="仅保留簇编号" width="90" x="849" y="30">
+        <parameter key="attribute_filter_type" value="single"/>
+        <parameter key="attribute" value="cluster"/>
+        <parameter key="attributes" value=""/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="attribute_value"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="time"/>
+        <parameter key="block_type" value="attribute_block"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="value_matrix_row_start"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="true"/>
+      </operator>
+      <operator activated="true" class="read_csv" compatibility="5.3.013" expanded="true" height="60" name="读入流行产品数据集" width="90" x="849" y="120">
+        <parameter key="csv_file" value="C:\du-work\商业智能\Chapter5\top3_product.csv"/>
+        <parameter key="column_separators" value=";"/>
+        <parameter key="trim_lines" value="false"/>
+        <parameter key="use_quotes" value="true"/>
+        <parameter key="quotes_character" value="&quot;"/>
+        <parameter key="escape_character" value="\"/>
+        <parameter key="skip_comments" value="false"/>
+        <parameter key="comment_characters" value="#"/>
+        <parameter key="parse_numbers" value="true"/>
+        <parameter key="decimal_character" value="."/>
+        <parameter key="grouped_digits" value="false"/>
+        <parameter key="grouping_character" value=","/>
+        <parameter key="date_format" value=""/>
+        <parameter key="first_row_as_names" value="false"/>
+        <list key="annotations">
+          <parameter key="0" value="Name"/>
+        </list>
+        <parameter key="time_zone" value="SYSTEM"/>
+        <parameter key="locale" value="English (United States)"/>
+        <parameter key="encoding" value="GBK"/>
+        <list key="data_set_meta_data_information">
+          <parameter key="0" value="Title.true.polynominal.attribute"/>
+          <parameter key="1" value="Style.true.polynominal.attribute"/>
+          <parameter key="2" value="Price.true.real.attribute"/>
+          <parameter key="3" value="cluster.true.polynominal.attribute"/>
+          <parameter key="4" value="Count.true.real.attribute"/>
+          <parameter key="5" value="Rank.true.real.attribute"/>
+        </list>
+        <parameter key="read_not_matching_values_as_missings" value="true"/>
+        <parameter key="datamanagement" value="double_array"/>
+      </operator>
+      <operator activated="true" class="join" compatibility="5.3.013" expanded="true" height="76" name="合并前三位产品信息" width="90" x="983" y="30">
+        <parameter key="remove_double_attributes" value="true"/>
+        <parameter key="join_type" value="inner"/>
+        <parameter key="use_id_attribute_as_key" value="false"/>
+        <list key="key_attributes">
+          <parameter key="cluster" value="cluster"/>
+        </list>
+        <parameter key="keep_both_join_attributes" value="false"/>
+      </operator>
+      <connect from_op="读入聚类模型" from_port="output" to_op="应用聚类模型" to_port="model"/>
+      <connect from_op="读入访问事件测试记录" from_port="output" to_op="F/T转换为0/1符号" to_port="example set input"/>
+      <connect from_op="F/T转换为0/1符号" from_port="example set output" to_op="0/1数值化" to_port="example set input"/>
+      <connect from_op="0/1数值化" from_port="example set output" to_op="应用聚类模型" to_port="unlabelled data"/>
+      <connect from_op="应用聚类模型" from_port="labelled data" to_op="仅保留簇编号" to_port="example set input"/>
+      <connect from_op="仅保留簇编号" from_port="example set output" to_op="合并前三位产品信息" to_port="left"/>
+      <connect from_op="读入流行产品数据集" from_port="output" to_op="合并前三位产品信息" to_port="right"/>
+      <connect from_op="合并前三位产品信息" from_port="join" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+    </process>
+  </operator>
+</process>
