@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<process version="5.3.013">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="5.3.013" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="retrieve" compatibility="5.3.013" expanded="true" height="60" name="读入完整分析表" width="90" x="313" y="30">
+        <parameter key="repository_entry" value="complete_analysis"/>
+      </operator>
+      <operator activated="true" class="misc:nominal_to_binominal_aggregation" compatibility="5.2.000" expanded="true" height="76" name="生成二元属性" width="90" x="447" y="30">
+        <parameter key="attribute_to_be_converted" value="first_dir"/>
+        <enumeration key="attributes_to_be_converted">
+          <parameter key="nominal_attribute" value="referer"/>
+          <parameter key="nominal_attribute" value="Page"/>
+        </enumeration>
+        <parameter key="use_underscore_in_name" value="true"/>
+        <enumeration key="attributes_for_making_groups">
+          <parameter key="nominal_attribute" value="VisitID"/>
+        </enumeration>
+      </operator>
+      <operator activated="true" class="set_role" compatibility="5.3.013" expanded="true" height="76" name="设置ID属性 (2)" width="90" x="581" y="30">
+        <parameter key="attribute_name" value="VisitID"/>
+        <parameter key="target_role" value="id"/>
+        <list key="set_additional_roles"/>
+      </operator>
+      <operator activated="true" class="nominal_to_numerical" compatibility="5.3.013" expanded="true" height="94" name="转换成数值属性" width="90" x="715" y="30">
+        <parameter key="return_preprocessing_model" value="false"/>
+        <parameter key="create_view" value="false"/>
+        <parameter key="attribute_filter_type" value="all"/>
+        <parameter key="attribute" value=""/>
+        <parameter key="attributes" value=""/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="nominal"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="file_path"/>
+        <parameter key="block_type" value="single_value"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="single_value"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+        <parameter key="coding_type" value="unique integers"/>
+        <parameter key="use_comparison_groups" value="false"/>
+        <list key="comparison_groups"/>
+        <parameter key="unexpected_value_handling" value="all 0 and warning"/>
+        <parameter key="use_underscore_in_name" value="false"/>
+      </operator>
+      <operator activated="true" class="x_means" compatibility="5.3.013" expanded="true" height="76" name="扩展k均值聚类" width="90" x="849" y="30">
+        <parameter key="add_cluster_attribute" value="true"/>
+        <parameter key="add_as_label" value="false"/>
+        <parameter key="remove_unlabeled" value="false"/>
+        <parameter key="k_min" value="2"/>
+        <parameter key="k_max" value="60"/>
+        <parameter key="determine_good_start_values" value="false"/>
+        <parameter key="measure_types" value="NumericalMeasures"/>
+        <parameter key="mixed_measure" value="MixedEuclideanDistance"/>
+        <parameter key="nominal_measure" value="NominalDistance"/>
+        <parameter key="numerical_measure" value="EuclideanDistance"/>
+        <parameter key="divergence" value="GeneralizedIDivergence"/>
+        <parameter key="kernel_type" value="radial"/>
+        <parameter key="kernel_gamma" value="1.0"/>
+        <parameter key="kernel_sigma1" value="1.0"/>
+        <parameter key="kernel_sigma2" value="0.0"/>
+        <parameter key="kernel_sigma3" value="2.0"/>
+        <parameter key="kernel_degree" value="3.0"/>
+        <parameter key="kernel_shift" value="1.0"/>
+        <parameter key="kernel_a" value="1.0"/>
+        <parameter key="kernel_b" value="0.0"/>
+        <parameter key="clustering_algorithm" value="FastKMeans"/>
+        <parameter key="max_runs" value="10"/>
+        <parameter key="max_optimization_steps" value="100"/>
+        <parameter key="use_local_random_seed" value="false"/>
+        <parameter key="local_random_seed" value="1992"/>
+      </operator>
+      <operator activated="true" class="write_clustering" compatibility="5.3.013" expanded="true" height="60" name="保存聚类模型" width="90" x="983" y="30">
+        <parameter key="cluster_model_file" value="C:\du-work\商业智能\Chapter5\visit_clustering.clm"/>
+      </operator>
+      <operator activated="true" class="misc:filter_examples_by_function" compatibility="5.2.000" expanded="true" height="76" name="保留含订单号的记录" width="90" x="581" y="165">
+        <parameter key="boolean_function" value="!missing(order_no)"/>
+        <parameter key="invert_filter" value="false"/>
+      </operator>
+      <operator activated="true" class="aggregate" compatibility="5.3.013" expanded="true" height="76" name="提取产品信息" width="90" x="715" y="165">
+        <parameter key="use_default_aggregation" value="true"/>
+        <parameter key="attribute_filter_type" value="subset"/>
+        <parameter key="attribute" value=""/>
+        <parameter key="attributes" value="Price|Style||ProductID|Title"/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="attribute_value"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="time"/>
+        <parameter key="block_type" value="attribute_block"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="value_matrix_row_start"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+        <parameter key="default_aggregation_function" value="mode"/>
+        <list key="aggregation_attributes"/>
+        <parameter key="group_by_attributes" value="|VisitID"/>
+        <parameter key="count_all_combinations" value="false"/>
+        <parameter key="only_distinct" value="false"/>
+        <parameter key="ignore_missings" value="true"/>
+      </operator>
+      <operator activated="true" class="set_role" compatibility="5.3.013" expanded="true" height="76" name="设置ID属性" width="90" x="849" y="120">
+        <parameter key="attribute_name" value="VisitID"/>
+        <parameter key="target_role" value="id"/>
+        <list key="set_additional_roles"/>
+      </operator>
+      <operator activated="true" class="join" compatibility="5.3.013" expanded="true" height="76" name="合并簇编号信息" width="90" x="983" y="120">
+        <parameter key="remove_double_attributes" value="true"/>
+        <parameter key="join_type" value="inner"/>
+        <parameter key="use_id_attribute_as_key" value="true"/>
+        <list key="key_attributes">
+          <parameter key="VisitID" value="VisitID"/>
+        </list>
+        <parameter key="keep_both_join_attributes" value="false"/>
+      </operator>
+      <operator activated="true" class="rename_by_replacing" compatibility="5.3.013" expanded="true" height="76" name="更改属性名" width="90" x="581" y="255">
+        <parameter key="attribute_filter_type" value="all"/>
+        <parameter key="attribute" value=""/>
+        <parameter key="attributes" value=""/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="attribute_value"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="time"/>
+        <parameter key="block_type" value="attribute_block"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="value_matrix_row_start"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+        <parameter key="replace_what" value="mode\((.*)\)"/>
+        <parameter key="replace_by" value="$1"/>
+      </operator>
+      <operator activated="true" class="aggregate" compatibility="5.3.013" expanded="true" height="76" name="统计每簇每产品出现次数" width="90" x="715" y="255">
+        <parameter key="use_default_aggregation" value="false"/>
+        <parameter key="attribute_filter_type" value="all"/>
+        <parameter key="attribute" value=""/>
+        <parameter key="attributes" value=""/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="attribute_value"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="time"/>
+        <parameter key="block_type" value="attribute_block"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="value_matrix_row_start"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+        <parameter key="default_aggregation_function" value="average"/>
+        <list key="aggregation_attributes">
+          <parameter key="VisitID" value="count"/>
+        </list>
+        <parameter key="group_by_attributes" value="cluster|Price|Style||ProductID|Title"/>
+        <parameter key="count_all_combinations" value="false"/>
+        <parameter key="only_distinct" value="false"/>
+        <parameter key="ignore_missings" value="true"/>
+      </operator>
+      <operator activated="true" class="rename" compatibility="5.3.013" expanded="true" height="76" name="更改出现次数属性名" width="90" x="849" y="255">
+        <parameter key="old_name" value="count(VisitID)"/>
+        <parameter key="new_name" value="Count"/>
+        <list key="rename_additional_attributes"/>
+      </operator>
+      <operator activated="true" class="sort" compatibility="5.3.013" expanded="true" height="76" name="按价格排序" width="90" x="983" y="255">
+        <parameter key="attribute_name" value="Price"/>
+        <parameter key="sorting_direction" value="increasing"/>
+      </operator>
+      <operator activated="true" class="sort" compatibility="5.3.013" expanded="true" height="76" name="按出现次数排序" width="90" x="581" y="345">
+        <parameter key="attribute_name" value="Count"/>
+        <parameter key="sorting_direction" value="decreasing"/>
+      </operator>
+      <operator activated="true" class="misc:generate_incremental_attribute" compatibility="5.2.000" expanded="true" height="76" name="添加产品排位属性" width="90" x="715" y="345">
+        <parameter key="attribute_to_be_added" value="Rank"/>
+        <parameter key="incremental_value_expression" value="1"/>
+        <enumeration key="attributes_for_making_groups">
+          <parameter key="nominal_attribute" value="cluster"/>
+        </enumeration>
+      </operator>
+      <operator activated="true" class="misc:filter_examples_by_function" compatibility="5.2.000" expanded="true" height="76" name="保留前三位产品" width="90" x="849" y="345">
+        <parameter key="boolean_function" value="Rank&lt;=3"/>
+        <parameter key="invert_filter" value="false"/>
+      </operator>
+      <operator activated="true" class="write_csv" compatibility="5.3.013" expanded="true" height="76" name="保存流行产品数据集" width="90" x="983" y="345">
+        <parameter key="csv_file" value="C:\du-work\商业智能\Chapter5\top3_product.csv"/>
+        <parameter key="column_separator" value=";"/>
+        <parameter key="write_attribute_names" value="true"/>
+        <parameter key="quote_nominal_values" value="true"/>
+        <parameter key="format_date_attributes" value="false"/>
+        <parameter key="append_to_file" value="false"/>
+        <parameter key="encoding" value="SYSTEM"/>
+      </operator>
+      <connect from_op="读入完整分析表" from_port="output" to_op="生成二元属性" to_port="example set input"/>
+      <connect from_op="生成二元属性" from_port="example set output" to_op="设置ID属性 (2)" to_port="example set input"/>
+      <connect from_op="生成二元属性" from_port="original" to_op="保留含订单号的记录" to_port="example set input"/>
+      <connect from_op="设置ID属性 (2)" from_port="example set output" to_op="转换成数值属性" to_port="example set input"/>
+      <connect from_op="转换成数值属性" from_port="example set output" to_op="扩展k均值聚类" to_port="example set"/>
+      <connect from_op="扩展k均值聚类" from_port="cluster model" to_op="保存聚类模型" to_port="input"/>
+      <connect from_op="扩展k均值聚类" from_port="clustered set" to_op="合并簇编号信息" to_port="right"/>
+      <connect from_op="保存聚类模型" from_port="through" to_port="result 1"/>
+      <connect from_op="保留含订单号的记录" from_port="example set output" to_op="提取产品信息" to_port="example set input"/>
+      <connect from_op="提取产品信息" from_port="example set output" to_op="设置ID属性" to_port="example set input"/>
+      <connect from_op="设置ID属性" from_port="example set output" to_op="合并簇编号信息" to_port="left"/>
+      <connect from_op="合并簇编号信息" from_port="join" to_op="更改属性名" to_port="example set input"/>
+      <connect from_op="更改属性名" from_port="example set output" to_op="统计每簇每产品出现次数" to_port="example set input"/>
+      <connect from_op="统计每簇每产品出现次数" from_port="example set output" to_op="更改出现次数属性名" to_port="example set input"/>
+      <connect from_op="更改出现次数属性名" from_port="example set output" to_op="按价格排序" to_port="example set input"/>
+      <connect from_op="按价格排序" from_port="example set output" to_op="按出现次数排序" to_port="example set input"/>
+      <connect from_op="按出现次数排序" from_port="example set output" to_op="添加产品排位属性" to_port="example set input"/>
+      <connect from_op="添加产品排位属性" from_port="example set output" to_op="保留前三位产品" to_port="example set input"/>
+      <connect from_op="保留前三位产品" from_port="example set output" to_op="保存流行产品数据集" to_port="input"/>
+      <connect from_op="保存流行产品数据集" from_port="through" to_port="result 2"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <portSpacing port="sink_result 3" spacing="0"/>
+    </process>
+  </operator>
+</process>
