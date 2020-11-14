@@ -1,0 +1,726 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<process version="5.3.013">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="5.3.013" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="set_macro" compatibility="5.3.013" expanded="true" height="76" name="设置8月宏" width="90" x="581" y="30">
+        <parameter key="macro" value="number"/>
+        <parameter key="value" value="800"/>
+      </operator>
+      <operator activated="true" class="loop" compatibility="5.3.013" expanded="true" height="76" name="对8月每天循环" width="90" x="715" y="30">
+        <parameter key="set_iteration_macro" value="false"/>
+        <parameter key="macro_name" value="iteration"/>
+        <parameter key="macro_start_value" value="1"/>
+        <parameter key="iterations" value="31"/>
+        <parameter key="limit_time" value="false"/>
+        <parameter key="timeout" value="1"/>
+        <process expanded="true">
+          <operator activated="true" class="generate_macro" compatibility="5.3.013" expanded="true" height="76" name="递增8月宏" width="90" x="45" y="30">
+            <list key="function_descriptions">
+              <parameter key="number" value="%{number}+1"/>
+            </list>
+            <parameter key="use_standard_constants" value="true"/>
+          </operator>
+          <operator activated="true" class="print_to_console" compatibility="5.3.013" expanded="true" height="76" name="打印8月日期" width="90" x="179" y="30">
+            <parameter key="log_value" value="20160%{number}"/>
+          </operator>
+          <operator activated="true" class="free_memory" compatibility="5.3.013" expanded="true" height="76" name="清理内存" width="90" x="313" y="30"/>
+          <operator activated="true" class="subprocess" compatibility="5.3.013" expanded="true" height="76" name="处理8月某一天" width="90" x="447" y="30">
+            <process expanded="true">
+              <operator activated="true" class="read_excel" compatibility="5.3.013" expanded="true" height="60" name="读入8月某天数据" width="90" x="45" y="30">
+                <parameter key="excel_file" value="C:\du-work\众筹网数据分析\data\Zhongchou0%{number}a.xls"/>
+                <parameter key="sheet_number" value="1"/>
+                <parameter key="imported_cell_range" value="A1:Z10000"/>
+                <parameter key="encoding" value="SYSTEM"/>
+                <parameter key="first_row_as_names" value="false"/>
+                <list key="annotations">
+                  <parameter key="0" value="Name"/>
+                </list>
+                <parameter key="date_format" value=""/>
+                <parameter key="time_zone" value="SYSTEM"/>
+                <parameter key="locale" value="English (United States)"/>
+                <list key="data_set_meta_data_information">
+                  <parameter key="0" value="支持人数.true.integer.attribute"/>
+                  <parameter key="1" value="剩余时间.true.polynominal.attribute"/>
+                  <parameter key="2" value="标题.true.polynominal.attribute"/>
+                  <parameter key="3" value="摘要.true.polynominal.attribute"/>
+                  <parameter key="4" value="已筹款.true.polynominal.attribute"/>
+                  <parameter key="5" value="筹款进度.true.polynominal.attribute"/>
+                  <parameter key="6" value="标签_1.true.polynominal.attribute"/>
+                  <parameter key="7" value="标签_2.true.polynominal.attribute"/>
+                  <parameter key="8" value="标签_3.true.polynominal.attribute"/>
+                  <parameter key="9" value="标签_4.true.polynominal.attribute"/>
+                  <parameter key="10" value="标签_5.true.polynominal.attribute"/>
+                  <parameter key="11" value="标签_6.true.polynominal.attribute"/>
+                  <parameter key="12" value="标签_7.true.polynominal.attribute"/>
+                  <parameter key="13" value="标签_8.true.polynominal.attribute"/>
+                  <parameter key="14" value="标签_9.true.polynominal.attribute"/>
+                  <parameter key="15" value="标签_10.true.polynominal.attribute"/>
+                  <parameter key="16" value="标签_11.true.polynominal.attribute"/>
+                  <parameter key="17" value="标签_12.true.polynominal.attribute"/>
+                  <parameter key="18" value="标签_13.true.polynominal.attribute"/>
+                  <parameter key="19" value="标签_14.true.polynominal.attribute"/>
+                  <parameter key="20" value="链接.true.polynominal.attribute"/>
+                </list>
+                <parameter key="read_not_matching_values_as_missings" value="true"/>
+                <parameter key="datamanagement" value="double_array"/>
+              </operator>
+              <operator activated="true" class="generate_attributes" compatibility="5.3.013" expanded="true" height="76" name="添加新属性" width="90" x="179" y="30">
+                <list key="function_descriptions">
+                  <parameter key="标签集" value="&quot;|&quot;"/>
+                  <parameter key="剩余天数" value="if(starts(concat(&quot;&quot;,剩余时间),&quot;剩余&quot;), 剩余时间, &quot;&quot;)"/>
+                  <parameter key="日期" value="&quot;20160%{number}&quot;"/>
+                </list>
+                <parameter key="use_standard_constants" value="true"/>
+                <parameter key="keep_all" value="true"/>
+              </operator>
+              <operator activated="true" class="loop_attributes" compatibility="5.3.013" expanded="true" height="76" name="循环处理各标签" width="90" x="315" y="30">
+                <parameter key="attribute_filter_type" value="regular_expression"/>
+                <parameter key="attribute" value=""/>
+                <parameter key="attributes" value=""/>
+                <parameter key="regular_expression" value="标签_\d+"/>
+                <parameter key="use_except_expression" value="false"/>
+                <parameter key="value_type" value="attribute_value"/>
+                <parameter key="use_value_type_exception" value="false"/>
+                <parameter key="except_value_type" value="time"/>
+                <parameter key="block_type" value="attribute_block"/>
+                <parameter key="use_block_type_exception" value="false"/>
+                <parameter key="except_block_type" value="value_matrix_row_start"/>
+                <parameter key="invert_selection" value="false"/>
+                <parameter key="include_special_attributes" value="false"/>
+                <parameter key="iteration_macro" value="attribute"/>
+                <process expanded="true">
+                  <operator activated="true" class="generate_attributes" compatibility="5.3.013" expanded="true" height="76" name="更新标签集" width="90" x="112" y="30">
+                    <list key="function_descriptions">
+                      <parameter key="标签集" value="if(!missing(%{attribute}), concat(标签集,%{attribute},&quot;|&quot;), 标签集)"/>
+                    </list>
+                    <parameter key="use_standard_constants" value="true"/>
+                    <parameter key="keep_all" value="true"/>
+                  </operator>
+                  <connect from_port="example set" to_op="更新标签集" to_port="example set input"/>
+                  <connect from_op="更新标签集" from_port="example set output" to_port="example set"/>
+                  <portSpacing port="source_example set" spacing="0"/>
+                  <portSpacing port="sink_example set" spacing="0"/>
+                  <portSpacing port="sink_result 1" spacing="0"/>
+                </process>
+              </operator>
+              <operator activated="true" class="select_attributes" compatibility="5.3.013" expanded="true" height="76" name="删除标签属性" width="90" x="450" y="30">
+                <parameter key="attribute_filter_type" value="regular_expression"/>
+                <parameter key="attribute" value=""/>
+                <parameter key="attributes" value=""/>
+                <parameter key="regular_expression" value="标签_\d+"/>
+                <parameter key="use_except_expression" value="false"/>
+                <parameter key="value_type" value="attribute_value"/>
+                <parameter key="use_value_type_exception" value="false"/>
+                <parameter key="except_value_type" value="time"/>
+                <parameter key="block_type" value="attribute_block"/>
+                <parameter key="use_block_type_exception" value="false"/>
+                <parameter key="except_block_type" value="value_matrix_row_start"/>
+                <parameter key="invert_selection" value="true"/>
+                <parameter key="include_special_attributes" value="false"/>
+              </operator>
+              <operator activated="true" class="replace" compatibility="5.3.013" expanded="true" height="76" name="清除已筹款中非数字小数点" width="90" x="585" y="30">
+                <parameter key="attribute_filter_type" value="single"/>
+                <parameter key="attribute" value="已筹款"/>
+                <parameter key="attributes" value=""/>
+                <parameter key="use_except_expression" value="false"/>
+                <parameter key="value_type" value="nominal"/>
+                <parameter key="use_value_type_exception" value="false"/>
+                <parameter key="except_value_type" value="file_path"/>
+                <parameter key="block_type" value="single_value"/>
+                <parameter key="use_block_type_exception" value="false"/>
+                <parameter key="except_block_type" value="single_value"/>
+                <parameter key="invert_selection" value="false"/>
+                <parameter key="include_special_attributes" value="false"/>
+                <parameter key="replace_what" value="[^0-9.]"/>
+              </operator>
+              <operator activated="true" class="replace" compatibility="5.3.013" expanded="true" height="76" name="清除筹款进度中非数字" width="90" x="45" y="120">
+                <parameter key="attribute_filter_type" value="single"/>
+                <parameter key="attribute" value="筹款进度"/>
+                <parameter key="attributes" value=""/>
+                <parameter key="use_except_expression" value="false"/>
+                <parameter key="value_type" value="nominal"/>
+                <parameter key="use_value_type_exception" value="false"/>
+                <parameter key="except_value_type" value="file_path"/>
+                <parameter key="block_type" value="single_value"/>
+                <parameter key="use_block_type_exception" value="false"/>
+                <parameter key="except_block_type" value="single_value"/>
+                <parameter key="invert_selection" value="false"/>
+                <parameter key="include_special_attributes" value="false"/>
+                <parameter key="replace_what" value="\D"/>
+              </operator>
+              <operator activated="true" class="replace" compatibility="5.3.013" expanded="true" height="76" name="提取剩余天数中数字" width="90" x="179" y="120">
+                <parameter key="attribute_filter_type" value="single"/>
+                <parameter key="attribute" value="剩余天数"/>
+                <parameter key="attributes" value=""/>
+                <parameter key="use_except_expression" value="false"/>
+                <parameter key="value_type" value="nominal"/>
+                <parameter key="use_value_type_exception" value="false"/>
+                <parameter key="except_value_type" value="file_path"/>
+                <parameter key="block_type" value="single_value"/>
+                <parameter key="use_block_type_exception" value="false"/>
+                <parameter key="except_block_type" value="single_value"/>
+                <parameter key="invert_selection" value="false"/>
+                <parameter key="include_special_attributes" value="false"/>
+                <parameter key="replace_what" value="剩余(\d+)天"/>
+                <parameter key="replace_by" value="$1"/>
+              </operator>
+              <operator activated="true" class="replace" compatibility="5.3.013" expanded="true" height="76" name="将无数字剩余天数替换为0" width="90" x="313" y="120">
+                <parameter key="attribute_filter_type" value="single"/>
+                <parameter key="attribute" value="剩余天数"/>
+                <parameter key="attributes" value=""/>
+                <parameter key="use_except_expression" value="false"/>
+                <parameter key="value_type" value="nominal"/>
+                <parameter key="use_value_type_exception" value="false"/>
+                <parameter key="except_value_type" value="file_path"/>
+                <parameter key="block_type" value="single_value"/>
+                <parameter key="use_block_type_exception" value="false"/>
+                <parameter key="except_block_type" value="single_value"/>
+                <parameter key="invert_selection" value="false"/>
+                <parameter key="include_special_attributes" value="false"/>
+                <parameter key="replace_what" value="剩余.*"/>
+                <parameter key="replace_by" value="0"/>
+              </operator>
+              <operator activated="true" class="parse_numbers" compatibility="5.3.013" expanded="true" height="76" name="将数字串解析为数值" width="90" x="447" y="120">
+                <parameter key="attribute_filter_type" value="subset"/>
+                <parameter key="attribute" value=""/>
+                <parameter key="attributes" value="|剩余天数|已筹款|筹款进度"/>
+                <parameter key="use_except_expression" value="false"/>
+                <parameter key="value_type" value="nominal"/>
+                <parameter key="use_value_type_exception" value="false"/>
+                <parameter key="except_value_type" value="file_path"/>
+                <parameter key="block_type" value="single_value"/>
+                <parameter key="use_block_type_exception" value="false"/>
+                <parameter key="except_block_type" value="single_value"/>
+                <parameter key="invert_selection" value="false"/>
+                <parameter key="include_special_attributes" value="false"/>
+                <parameter key="decimal_character" value="."/>
+                <parameter key="grouped_digits" value="false"/>
+                <parameter key="grouping_character" value=","/>
+              </operator>
+              <operator activated="true" class="nominal_to_date" compatibility="5.3.013" expanded="true" height="76" name="将日期串解析为日期值" width="90" x="581" y="120">
+                <parameter key="attribute_name" value="日期"/>
+                <parameter key="date_type" value="date"/>
+                <parameter key="date_format" value="yyyyMMdd"/>
+                <parameter key="time_zone" value="SYSTEM"/>
+                <parameter key="locale" value="English (United States)"/>
+                <parameter key="keep_old_attribute" value="false"/>
+              </operator>
+              <connect from_op="读入8月某天数据" from_port="output" to_op="添加新属性" to_port="example set input"/>
+              <connect from_op="添加新属性" from_port="example set output" to_op="循环处理各标签" to_port="example set"/>
+              <connect from_op="循环处理各标签" from_port="example set" to_op="删除标签属性" to_port="example set input"/>
+              <connect from_op="删除标签属性" from_port="example set output" to_op="清除已筹款中非数字小数点" to_port="example set input"/>
+              <connect from_op="清除已筹款中非数字小数点" from_port="example set output" to_op="清除筹款进度中非数字" to_port="example set input"/>
+              <connect from_op="清除筹款进度中非数字" from_port="example set output" to_op="提取剩余天数中数字" to_port="example set input"/>
+              <connect from_op="提取剩余天数中数字" from_port="example set output" to_op="将无数字剩余天数替换为0" to_port="example set input"/>
+              <connect from_op="将无数字剩余天数替换为0" from_port="example set output" to_op="将数字串解析为数值" to_port="example set input"/>
+              <connect from_op="将数字串解析为数值" from_port="example set output" to_op="将日期串解析为日期值" to_port="example set input"/>
+              <connect from_op="将日期串解析为日期值" from_port="example set output" to_port="out 1"/>
+              <portSpacing port="source_in 1" spacing="0"/>
+              <portSpacing port="source_in 2" spacing="0"/>
+              <portSpacing port="sink_out 1" spacing="0"/>
+              <portSpacing port="sink_out 2" spacing="0"/>
+            </process>
+          </operator>
+          <connect from_port="input 1" to_op="递增8月宏" to_port="through 1"/>
+          <connect from_op="递增8月宏" from_port="through 1" to_op="打印8月日期" to_port="through 1"/>
+          <connect from_op="打印8月日期" from_port="through 1" to_op="清理内存" to_port="through 1"/>
+          <connect from_op="清理内存" from_port="through 1" to_op="处理8月某一天" to_port="in 1"/>
+          <connect from_op="处理8月某一天" from_port="out 1" to_port="output 1"/>
+          <portSpacing port="source_input 1" spacing="0"/>
+          <portSpacing port="source_input 2" spacing="0"/>
+          <portSpacing port="sink_output 1" spacing="0"/>
+          <portSpacing port="sink_output 2" spacing="0"/>
+        </process>
+      </operator>
+      <operator activated="true" class="set_macro" compatibility="5.3.013" expanded="true" height="76" name="设置9月宏" width="90" x="581" y="165">
+        <parameter key="macro" value="number"/>
+        <parameter key="value" value="900"/>
+      </operator>
+      <operator activated="true" class="loop" compatibility="5.3.013" expanded="true" height="76" name="对9月每天循环" width="90" x="715" y="165">
+        <parameter key="set_iteration_macro" value="false"/>
+        <parameter key="macro_name" value="iteration"/>
+        <parameter key="macro_start_value" value="1"/>
+        <parameter key="iterations" value="30"/>
+        <parameter key="limit_time" value="false"/>
+        <parameter key="timeout" value="1"/>
+        <process expanded="true">
+          <operator activated="true" class="generate_macro" compatibility="5.3.013" expanded="true" height="76" name="递增9月宏" width="90" x="42" y="30">
+            <list key="function_descriptions">
+              <parameter key="number" value="%{number}+1"/>
+            </list>
+            <parameter key="use_standard_constants" value="true"/>
+          </operator>
+          <operator activated="true" class="print_to_console" compatibility="5.3.013" expanded="true" height="76" name="打印9月日期" width="90" x="179" y="30">
+            <parameter key="log_value" value="20160%{number}"/>
+          </operator>
+          <operator activated="true" class="free_memory" compatibility="5.3.013" expanded="true" height="76" name="清理内存 (2)" width="90" x="312" y="30"/>
+          <operator activated="true" class="subprocess" compatibility="5.3.013" expanded="true" height="76" name="处理9月某一天" width="90" x="447" y="30">
+            <process expanded="true">
+              <operator activated="true" class="read_excel" compatibility="5.3.013" expanded="true" height="60" name="读入9月某天数据" width="90" x="45" y="30">
+                <parameter key="excel_file" value="C:\du-work\众筹网数据分析\data\Zhongchou0%{number}a.xls"/>
+                <parameter key="sheet_number" value="1"/>
+                <parameter key="imported_cell_range" value="A1:Z10000"/>
+                <parameter key="encoding" value="SYSTEM"/>
+                <parameter key="first_row_as_names" value="false"/>
+                <list key="annotations">
+                  <parameter key="0" value="Name"/>
+                </list>
+                <parameter key="date_format" value=""/>
+                <parameter key="time_zone" value="SYSTEM"/>
+                <parameter key="locale" value="English (United States)"/>
+                <list key="data_set_meta_data_information">
+                  <parameter key="0" value="支持人数.true.integer.attribute"/>
+                  <parameter key="1" value="剩余时间.true.polynominal.attribute"/>
+                  <parameter key="2" value="标题.true.polynominal.attribute"/>
+                  <parameter key="3" value="摘要.true.polynominal.attribute"/>
+                  <parameter key="4" value="已筹款.true.polynominal.attribute"/>
+                  <parameter key="5" value="筹款进度.true.polynominal.attribute"/>
+                  <parameter key="6" value="标签_1.true.polynominal.attribute"/>
+                  <parameter key="7" value="标签_2.true.polynominal.attribute"/>
+                  <parameter key="8" value="标签_3.true.polynominal.attribute"/>
+                  <parameter key="9" value="标签_4.true.polynominal.attribute"/>
+                  <parameter key="10" value="标签_5.true.polynominal.attribute"/>
+                  <parameter key="11" value="标签_6.true.polynominal.attribute"/>
+                  <parameter key="12" value="标签_7.true.polynominal.attribute"/>
+                  <parameter key="13" value="标签_8.true.polynominal.attribute"/>
+                  <parameter key="14" value="标签_9.true.polynominal.attribute"/>
+                  <parameter key="15" value="标签_10.true.polynominal.attribute"/>
+                  <parameter key="16" value="标签_11.true.polynominal.attribute"/>
+                  <parameter key="17" value="标签_12.true.polynominal.attribute"/>
+                  <parameter key="18" value="标签_13.true.polynominal.attribute"/>
+                  <parameter key="19" value="标签_14.true.polynominal.attribute"/>
+                  <parameter key="20" value="链接.true.polynominal.attribute"/>
+                </list>
+                <parameter key="read_not_matching_values_as_missings" value="true"/>
+                <parameter key="datamanagement" value="double_array"/>
+              </operator>
+              <operator activated="true" class="generate_attributes" compatibility="5.3.013" expanded="true" height="76" name="添加新属性 (2)" width="90" x="179" y="30">
+                <list key="function_descriptions">
+                  <parameter key="标签集" value="&quot;|&quot;"/>
+                  <parameter key="剩余天数" value="if(starts(concat(&quot;&quot;,剩余时间),&quot;剩余&quot;), 剩余时间, &quot;&quot;)"/>
+                  <parameter key="日期" value="&quot;20160%{number}&quot;"/>
+                </list>
+                <parameter key="use_standard_constants" value="true"/>
+                <parameter key="keep_all" value="true"/>
+              </operator>
+              <operator activated="true" class="loop_attributes" compatibility="5.3.013" expanded="true" height="76" name="循环处理各标签 (2)" width="90" x="315" y="30">
+                <parameter key="attribute_filter_type" value="regular_expression"/>
+                <parameter key="attribute" value=""/>
+                <parameter key="attributes" value=""/>
+                <parameter key="regular_expression" value="标签_\d+"/>
+                <parameter key="use_except_expression" value="false"/>
+                <parameter key="value_type" value="attribute_value"/>
+                <parameter key="use_value_type_exception" value="false"/>
+                <parameter key="except_value_type" value="time"/>
+                <parameter key="block_type" value="attribute_block"/>
+                <parameter key="use_block_type_exception" value="false"/>
+                <parameter key="except_block_type" value="value_matrix_row_start"/>
+                <parameter key="invert_selection" value="false"/>
+                <parameter key="include_special_attributes" value="false"/>
+                <parameter key="iteration_macro" value="attribute"/>
+                <process expanded="true">
+                  <operator activated="true" class="generate_attributes" compatibility="5.3.013" expanded="true" height="76" name="更新标签集 (2)" width="90" x="112" y="30">
+                    <list key="function_descriptions">
+                      <parameter key="标签集" value="if(!missing(%{attribute}), concat(标签集,%{attribute},&quot;|&quot;), 标签集)"/>
+                    </list>
+                    <parameter key="use_standard_constants" value="true"/>
+                    <parameter key="keep_all" value="true"/>
+                  </operator>
+                  <connect from_port="example set" to_op="更新标签集 (2)" to_port="example set input"/>
+                  <connect from_op="更新标签集 (2)" from_port="example set output" to_port="example set"/>
+                  <portSpacing port="source_example set" spacing="0"/>
+                  <portSpacing port="sink_example set" spacing="0"/>
+                  <portSpacing port="sink_result 1" spacing="0"/>
+                </process>
+              </operator>
+              <operator activated="true" class="select_attributes" compatibility="5.3.013" expanded="true" height="76" name="删除标签属性 (2)" width="90" x="450" y="30">
+                <parameter key="attribute_filter_type" value="regular_expression"/>
+                <parameter key="attribute" value=""/>
+                <parameter key="attributes" value=""/>
+                <parameter key="regular_expression" value="标签_\d+"/>
+                <parameter key="use_except_expression" value="false"/>
+                <parameter key="value_type" value="attribute_value"/>
+                <parameter key="use_value_type_exception" value="false"/>
+                <parameter key="except_value_type" value="time"/>
+                <parameter key="block_type" value="attribute_block"/>
+                <parameter key="use_block_type_exception" value="false"/>
+                <parameter key="except_block_type" value="value_matrix_row_start"/>
+                <parameter key="invert_selection" value="true"/>
+                <parameter key="include_special_attributes" value="false"/>
+              </operator>
+              <operator activated="true" class="replace" compatibility="5.3.013" expanded="true" height="76" name="清除已筹款中非数字小数点 (2)" width="90" x="585" y="30">
+                <parameter key="attribute_filter_type" value="single"/>
+                <parameter key="attribute" value="已筹款"/>
+                <parameter key="attributes" value=""/>
+                <parameter key="use_except_expression" value="false"/>
+                <parameter key="value_type" value="nominal"/>
+                <parameter key="use_value_type_exception" value="false"/>
+                <parameter key="except_value_type" value="file_path"/>
+                <parameter key="block_type" value="single_value"/>
+                <parameter key="use_block_type_exception" value="false"/>
+                <parameter key="except_block_type" value="single_value"/>
+                <parameter key="invert_selection" value="false"/>
+                <parameter key="include_special_attributes" value="false"/>
+                <parameter key="replace_what" value="[^0-9.]"/>
+              </operator>
+              <operator activated="true" class="replace" compatibility="5.3.013" expanded="true" height="76" name="清除筹款进度中非数字 (2)" width="90" x="45" y="120">
+                <parameter key="attribute_filter_type" value="single"/>
+                <parameter key="attribute" value="筹款进度"/>
+                <parameter key="attributes" value=""/>
+                <parameter key="use_except_expression" value="false"/>
+                <parameter key="value_type" value="nominal"/>
+                <parameter key="use_value_type_exception" value="false"/>
+                <parameter key="except_value_type" value="file_path"/>
+                <parameter key="block_type" value="single_value"/>
+                <parameter key="use_block_type_exception" value="false"/>
+                <parameter key="except_block_type" value="single_value"/>
+                <parameter key="invert_selection" value="false"/>
+                <parameter key="include_special_attributes" value="false"/>
+                <parameter key="replace_what" value="\D"/>
+              </operator>
+              <operator activated="true" class="replace" compatibility="5.3.013" expanded="true" height="76" name="提取剩余天数中数字 (2)" width="90" x="179" y="120">
+                <parameter key="attribute_filter_type" value="single"/>
+                <parameter key="attribute" value="剩余天数"/>
+                <parameter key="attributes" value=""/>
+                <parameter key="use_except_expression" value="false"/>
+                <parameter key="value_type" value="nominal"/>
+                <parameter key="use_value_type_exception" value="false"/>
+                <parameter key="except_value_type" value="file_path"/>
+                <parameter key="block_type" value="single_value"/>
+                <parameter key="use_block_type_exception" value="false"/>
+                <parameter key="except_block_type" value="single_value"/>
+                <parameter key="invert_selection" value="false"/>
+                <parameter key="include_special_attributes" value="false"/>
+                <parameter key="replace_what" value="剩余(\d+)天"/>
+                <parameter key="replace_by" value="$1"/>
+              </operator>
+              <operator activated="true" class="replace" compatibility="5.3.013" expanded="true" height="76" name="将无数字剩余天数替换为0 (2)" width="90" x="313" y="120">
+                <parameter key="attribute_filter_type" value="single"/>
+                <parameter key="attribute" value="剩余天数"/>
+                <parameter key="attributes" value=""/>
+                <parameter key="use_except_expression" value="false"/>
+                <parameter key="value_type" value="nominal"/>
+                <parameter key="use_value_type_exception" value="false"/>
+                <parameter key="except_value_type" value="file_path"/>
+                <parameter key="block_type" value="single_value"/>
+                <parameter key="use_block_type_exception" value="false"/>
+                <parameter key="except_block_type" value="single_value"/>
+                <parameter key="invert_selection" value="false"/>
+                <parameter key="include_special_attributes" value="false"/>
+                <parameter key="replace_what" value="剩余.*"/>
+                <parameter key="replace_by" value="0"/>
+              </operator>
+              <operator activated="true" class="parse_numbers" compatibility="5.3.013" expanded="true" height="76" name="将数字串解析为数值 (2)" width="90" x="447" y="120">
+                <parameter key="attribute_filter_type" value="subset"/>
+                <parameter key="attribute" value=""/>
+                <parameter key="attributes" value="|剩余天数|已筹款|筹款进度"/>
+                <parameter key="use_except_expression" value="false"/>
+                <parameter key="value_type" value="nominal"/>
+                <parameter key="use_value_type_exception" value="false"/>
+                <parameter key="except_value_type" value="file_path"/>
+                <parameter key="block_type" value="single_value"/>
+                <parameter key="use_block_type_exception" value="false"/>
+                <parameter key="except_block_type" value="single_value"/>
+                <parameter key="invert_selection" value="false"/>
+                <parameter key="include_special_attributes" value="false"/>
+                <parameter key="decimal_character" value="."/>
+                <parameter key="grouped_digits" value="false"/>
+                <parameter key="grouping_character" value=","/>
+              </operator>
+              <operator activated="true" class="nominal_to_date" compatibility="5.3.013" expanded="true" height="76" name="将日期串解析为日期值 (2)" width="90" x="581" y="120">
+                <parameter key="attribute_name" value="日期"/>
+                <parameter key="date_type" value="date"/>
+                <parameter key="date_format" value="yyyyMMdd"/>
+                <parameter key="time_zone" value="SYSTEM"/>
+                <parameter key="locale" value="English (United States)"/>
+                <parameter key="keep_old_attribute" value="false"/>
+              </operator>
+              <connect from_op="读入9月某天数据" from_port="output" to_op="添加新属性 (2)" to_port="example set input"/>
+              <connect from_op="添加新属性 (2)" from_port="example set output" to_op="循环处理各标签 (2)" to_port="example set"/>
+              <connect from_op="循环处理各标签 (2)" from_port="example set" to_op="删除标签属性 (2)" to_port="example set input"/>
+              <connect from_op="删除标签属性 (2)" from_port="example set output" to_op="清除已筹款中非数字小数点 (2)" to_port="example set input"/>
+              <connect from_op="清除已筹款中非数字小数点 (2)" from_port="example set output" to_op="清除筹款进度中非数字 (2)" to_port="example set input"/>
+              <connect from_op="清除筹款进度中非数字 (2)" from_port="example set output" to_op="提取剩余天数中数字 (2)" to_port="example set input"/>
+              <connect from_op="提取剩余天数中数字 (2)" from_port="example set output" to_op="将无数字剩余天数替换为0 (2)" to_port="example set input"/>
+              <connect from_op="将无数字剩余天数替换为0 (2)" from_port="example set output" to_op="将数字串解析为数值 (2)" to_port="example set input"/>
+              <connect from_op="将数字串解析为数值 (2)" from_port="example set output" to_op="将日期串解析为日期值 (2)" to_port="example set input"/>
+              <connect from_op="将日期串解析为日期值 (2)" from_port="example set output" to_port="out 1"/>
+              <portSpacing port="source_in 1" spacing="0"/>
+              <portSpacing port="source_in 2" spacing="0"/>
+              <portSpacing port="sink_out 1" spacing="0"/>
+              <portSpacing port="sink_out 2" spacing="0"/>
+            </process>
+          </operator>
+          <connect from_port="input 1" to_op="递增9月宏" to_port="through 1"/>
+          <connect from_op="递增9月宏" from_port="through 1" to_op="打印9月日期" to_port="through 1"/>
+          <connect from_op="打印9月日期" from_port="through 1" to_op="清理内存 (2)" to_port="through 1"/>
+          <connect from_op="清理内存 (2)" from_port="through 1" to_op="处理9月某一天" to_port="in 1"/>
+          <connect from_op="处理9月某一天" from_port="out 1" to_port="output 1"/>
+          <portSpacing port="source_input 1" spacing="0"/>
+          <portSpacing port="source_input 2" spacing="0"/>
+          <portSpacing port="sink_output 1" spacing="0"/>
+          <portSpacing port="sink_output 2" spacing="0"/>
+        </process>
+      </operator>
+      <operator activated="true" class="set_macro" compatibility="5.3.013" expanded="true" height="76" name="设置10月宏" width="90" x="581" y="300">
+        <parameter key="macro" value="number"/>
+        <parameter key="value" value="1000"/>
+      </operator>
+      <operator activated="true" class="loop" compatibility="5.3.013" expanded="true" height="76" name="对10月每天循环" width="90" x="715" y="300">
+        <parameter key="set_iteration_macro" value="false"/>
+        <parameter key="macro_name" value="iteration"/>
+        <parameter key="macro_start_value" value="1"/>
+        <parameter key="iterations" value="31"/>
+        <parameter key="limit_time" value="false"/>
+        <parameter key="timeout" value="1"/>
+        <process expanded="true">
+          <operator activated="true" class="generate_macro" compatibility="5.3.013" expanded="true" height="76" name="递增10月宏" width="90" x="45" y="30">
+            <list key="function_descriptions">
+              <parameter key="number" value="%{number}+1"/>
+            </list>
+            <parameter key="use_standard_constants" value="true"/>
+          </operator>
+          <operator activated="true" class="print_to_console" compatibility="5.3.013" expanded="true" height="76" name="打印10月日期" width="90" x="179" y="30">
+            <parameter key="log_value" value="2016%{number}"/>
+          </operator>
+          <operator activated="true" class="free_memory" compatibility="5.3.013" expanded="true" height="76" name="清理内存 (3)" width="90" x="315" y="30"/>
+          <operator activated="true" class="subprocess" compatibility="5.3.013" expanded="true" height="76" name="处理10月某一天" width="90" x="447" y="30">
+            <process expanded="true">
+              <operator activated="true" class="read_excel" compatibility="5.3.013" expanded="true" height="60" name="读入10月某天数据" width="90" x="45" y="30">
+                <parameter key="excel_file" value="C:\du-work\众筹网数据分析\data\Zhongchou%{number}a.xls"/>
+                <parameter key="sheet_number" value="1"/>
+                <parameter key="imported_cell_range" value="A1:Z10000"/>
+                <parameter key="encoding" value="SYSTEM"/>
+                <parameter key="first_row_as_names" value="false"/>
+                <list key="annotations">
+                  <parameter key="0" value="Name"/>
+                </list>
+                <parameter key="date_format" value=""/>
+                <parameter key="time_zone" value="SYSTEM"/>
+                <parameter key="locale" value="English (United States)"/>
+                <list key="data_set_meta_data_information">
+                  <parameter key="0" value="支持人数.true.integer.attribute"/>
+                  <parameter key="1" value="剩余时间.true.polynominal.attribute"/>
+                  <parameter key="2" value="标题.true.polynominal.attribute"/>
+                  <parameter key="3" value="摘要.true.polynominal.attribute"/>
+                  <parameter key="4" value="已筹款.true.polynominal.attribute"/>
+                  <parameter key="5" value="筹款进度.true.polynominal.attribute"/>
+                  <parameter key="6" value="标签_1.true.polynominal.attribute"/>
+                  <parameter key="7" value="标签_2.true.polynominal.attribute"/>
+                  <parameter key="8" value="标签_3.true.polynominal.attribute"/>
+                  <parameter key="9" value="标签_4.true.polynominal.attribute"/>
+                  <parameter key="10" value="标签_5.true.polynominal.attribute"/>
+                  <parameter key="11" value="标签_6.true.polynominal.attribute"/>
+                  <parameter key="12" value="标签_7.true.polynominal.attribute"/>
+                  <parameter key="13" value="标签_8.true.polynominal.attribute"/>
+                  <parameter key="14" value="标签_9.true.polynominal.attribute"/>
+                  <parameter key="15" value="标签_10.true.polynominal.attribute"/>
+                  <parameter key="16" value="标签_11.true.polynominal.attribute"/>
+                  <parameter key="17" value="标签_12.true.polynominal.attribute"/>
+                  <parameter key="18" value="标签_13.true.polynominal.attribute"/>
+                  <parameter key="19" value="标签_14.true.polynominal.attribute"/>
+                  <parameter key="20" value="链接.true.polynominal.attribute"/>
+                </list>
+                <parameter key="read_not_matching_values_as_missings" value="true"/>
+                <parameter key="datamanagement" value="double_array"/>
+              </operator>
+              <operator activated="true" class="generate_attributes" compatibility="5.3.013" expanded="true" height="76" name="添加新属性 (3)" width="90" x="179" y="30">
+                <list key="function_descriptions">
+                  <parameter key="标签集" value="&quot;|&quot;"/>
+                  <parameter key="剩余天数" value="if(starts(concat(&quot;&quot;,剩余时间),&quot;剩余&quot;), 剩余时间, &quot;&quot;)"/>
+                  <parameter key="日期" value="&quot;2016%{number}&quot;"/>
+                </list>
+                <parameter key="use_standard_constants" value="true"/>
+                <parameter key="keep_all" value="true"/>
+              </operator>
+              <operator activated="true" class="loop_attributes" compatibility="5.3.013" expanded="true" height="76" name="循环处理各标签 (3)" width="90" x="315" y="30">
+                <parameter key="attribute_filter_type" value="regular_expression"/>
+                <parameter key="attribute" value=""/>
+                <parameter key="attributes" value=""/>
+                <parameter key="regular_expression" value="标签_\d+"/>
+                <parameter key="use_except_expression" value="false"/>
+                <parameter key="value_type" value="attribute_value"/>
+                <parameter key="use_value_type_exception" value="false"/>
+                <parameter key="except_value_type" value="time"/>
+                <parameter key="block_type" value="attribute_block"/>
+                <parameter key="use_block_type_exception" value="false"/>
+                <parameter key="except_block_type" value="value_matrix_row_start"/>
+                <parameter key="invert_selection" value="false"/>
+                <parameter key="include_special_attributes" value="false"/>
+                <parameter key="iteration_macro" value="attribute"/>
+                <process expanded="true">
+                  <operator activated="true" class="generate_attributes" compatibility="5.3.013" expanded="true" height="76" name="更新标签集 (3)" width="90" x="45" y="30">
+                    <list key="function_descriptions">
+                      <parameter key="标签集" value="if(!missing(%{attribute}), concat(标签集,%{attribute},&quot;|&quot;), 标签集)"/>
+                    </list>
+                    <parameter key="use_standard_constants" value="true"/>
+                    <parameter key="keep_all" value="true"/>
+                  </operator>
+                  <connect from_port="example set" to_op="更新标签集 (3)" to_port="example set input"/>
+                  <connect from_op="更新标签集 (3)" from_port="example set output" to_port="example set"/>
+                  <portSpacing port="source_example set" spacing="0"/>
+                  <portSpacing port="sink_example set" spacing="0"/>
+                  <portSpacing port="sink_result 1" spacing="0"/>
+                </process>
+              </operator>
+              <operator activated="true" class="select_attributes" compatibility="5.3.013" expanded="true" height="76" name="删除标签属性 (3)" width="90" x="447" y="30">
+                <parameter key="attribute_filter_type" value="regular_expression"/>
+                <parameter key="attribute" value=""/>
+                <parameter key="attributes" value=""/>
+                <parameter key="regular_expression" value="标签_\d+"/>
+                <parameter key="use_except_expression" value="false"/>
+                <parameter key="value_type" value="attribute_value"/>
+                <parameter key="use_value_type_exception" value="false"/>
+                <parameter key="except_value_type" value="time"/>
+                <parameter key="block_type" value="attribute_block"/>
+                <parameter key="use_block_type_exception" value="false"/>
+                <parameter key="except_block_type" value="value_matrix_row_start"/>
+                <parameter key="invert_selection" value="true"/>
+                <parameter key="include_special_attributes" value="false"/>
+              </operator>
+              <operator activated="true" class="replace" compatibility="5.3.013" expanded="true" height="76" name="清除已筹款中非数字小数点 (3)" width="90" x="581" y="30">
+                <parameter key="attribute_filter_type" value="single"/>
+                <parameter key="attribute" value="已筹款"/>
+                <parameter key="attributes" value=""/>
+                <parameter key="use_except_expression" value="false"/>
+                <parameter key="value_type" value="nominal"/>
+                <parameter key="use_value_type_exception" value="false"/>
+                <parameter key="except_value_type" value="file_path"/>
+                <parameter key="block_type" value="single_value"/>
+                <parameter key="use_block_type_exception" value="false"/>
+                <parameter key="except_block_type" value="single_value"/>
+                <parameter key="invert_selection" value="false"/>
+                <parameter key="include_special_attributes" value="false"/>
+                <parameter key="replace_what" value="[^0-9.]"/>
+              </operator>
+              <operator activated="true" class="replace" compatibility="5.3.013" expanded="true" height="76" name="清除筹款进度中非数字 (3)" width="90" x="45" y="120">
+                <parameter key="attribute_filter_type" value="single"/>
+                <parameter key="attribute" value="筹款进度"/>
+                <parameter key="attributes" value=""/>
+                <parameter key="use_except_expression" value="false"/>
+                <parameter key="value_type" value="nominal"/>
+                <parameter key="use_value_type_exception" value="false"/>
+                <parameter key="except_value_type" value="file_path"/>
+                <parameter key="block_type" value="single_value"/>
+                <parameter key="use_block_type_exception" value="false"/>
+                <parameter key="except_block_type" value="single_value"/>
+                <parameter key="invert_selection" value="false"/>
+                <parameter key="include_special_attributes" value="false"/>
+                <parameter key="replace_what" value="\D"/>
+              </operator>
+              <operator activated="true" class="replace" compatibility="5.3.013" expanded="true" height="76" name="提取剩余天数中数字 (3)" width="90" x="179" y="120">
+                <parameter key="attribute_filter_type" value="single"/>
+                <parameter key="attribute" value="剩余天数"/>
+                <parameter key="attributes" value=""/>
+                <parameter key="use_except_expression" value="false"/>
+                <parameter key="value_type" value="nominal"/>
+                <parameter key="use_value_type_exception" value="false"/>
+                <parameter key="except_value_type" value="file_path"/>
+                <parameter key="block_type" value="single_value"/>
+                <parameter key="use_block_type_exception" value="false"/>
+                <parameter key="except_block_type" value="single_value"/>
+                <parameter key="invert_selection" value="false"/>
+                <parameter key="include_special_attributes" value="false"/>
+                <parameter key="replace_what" value="剩余(\d+)天"/>
+                <parameter key="replace_by" value="$1"/>
+              </operator>
+              <operator activated="true" class="replace" compatibility="5.3.013" expanded="true" height="76" name="将无数字剩余天数替换为0 (3)" width="90" x="313" y="120">
+                <parameter key="attribute_filter_type" value="single"/>
+                <parameter key="attribute" value="剩余天数"/>
+                <parameter key="attributes" value=""/>
+                <parameter key="use_except_expression" value="false"/>
+                <parameter key="value_type" value="nominal"/>
+                <parameter key="use_value_type_exception" value="false"/>
+                <parameter key="except_value_type" value="file_path"/>
+                <parameter key="block_type" value="single_value"/>
+                <parameter key="use_block_type_exception" value="false"/>
+                <parameter key="except_block_type" value="single_value"/>
+                <parameter key="invert_selection" value="false"/>
+                <parameter key="include_special_attributes" value="false"/>
+                <parameter key="replace_what" value="剩余.*"/>
+                <parameter key="replace_by" value="0"/>
+              </operator>
+              <operator activated="true" class="parse_numbers" compatibility="5.3.013" expanded="true" height="76" name="将数字串解析为数值 (3)" width="90" x="447" y="120">
+                <parameter key="attribute_filter_type" value="subset"/>
+                <parameter key="attribute" value=""/>
+                <parameter key="attributes" value="|剩余天数|已筹款|筹款进度"/>
+                <parameter key="use_except_expression" value="false"/>
+                <parameter key="value_type" value="nominal"/>
+                <parameter key="use_value_type_exception" value="false"/>
+                <parameter key="except_value_type" value="file_path"/>
+                <parameter key="block_type" value="single_value"/>
+                <parameter key="use_block_type_exception" value="false"/>
+                <parameter key="except_block_type" value="single_value"/>
+                <parameter key="invert_selection" value="false"/>
+                <parameter key="include_special_attributes" value="false"/>
+                <parameter key="decimal_character" value="."/>
+                <parameter key="grouped_digits" value="false"/>
+                <parameter key="grouping_character" value=","/>
+              </operator>
+              <operator activated="true" class="nominal_to_date" compatibility="5.3.013" expanded="true" height="76" name="将日期串解析为日期值 (3)" width="90" x="581" y="120">
+                <parameter key="attribute_name" value="日期"/>
+                <parameter key="date_type" value="date"/>
+                <parameter key="date_format" value="yyyyMMdd"/>
+                <parameter key="time_zone" value="SYSTEM"/>
+                <parameter key="locale" value="English (United States)"/>
+                <parameter key="keep_old_attribute" value="false"/>
+              </operator>
+              <connect from_op="读入10月某天数据" from_port="output" to_op="添加新属性 (3)" to_port="example set input"/>
+              <connect from_op="添加新属性 (3)" from_port="example set output" to_op="循环处理各标签 (3)" to_port="example set"/>
+              <connect from_op="循环处理各标签 (3)" from_port="example set" to_op="删除标签属性 (3)" to_port="example set input"/>
+              <connect from_op="删除标签属性 (3)" from_port="example set output" to_op="清除已筹款中非数字小数点 (3)" to_port="example set input"/>
+              <connect from_op="清除已筹款中非数字小数点 (3)" from_port="example set output" to_op="清除筹款进度中非数字 (3)" to_port="example set input"/>
+              <connect from_op="清除筹款进度中非数字 (3)" from_port="example set output" to_op="提取剩余天数中数字 (3)" to_port="example set input"/>
+              <connect from_op="提取剩余天数中数字 (3)" from_port="example set output" to_op="将无数字剩余天数替换为0 (3)" to_port="example set input"/>
+              <connect from_op="将无数字剩余天数替换为0 (3)" from_port="example set output" to_op="将数字串解析为数值 (3)" to_port="example set input"/>
+              <connect from_op="将数字串解析为数值 (3)" from_port="example set output" to_op="将日期串解析为日期值 (3)" to_port="example set input"/>
+              <connect from_op="将日期串解析为日期值 (3)" from_port="example set output" to_port="out 1"/>
+              <portSpacing port="source_in 1" spacing="0"/>
+              <portSpacing port="source_in 2" spacing="0"/>
+              <portSpacing port="sink_out 1" spacing="0"/>
+              <portSpacing port="sink_out 2" spacing="0"/>
+            </process>
+          </operator>
+          <connect from_port="input 1" to_op="递增10月宏" to_port="through 1"/>
+          <connect from_op="递增10月宏" from_port="through 1" to_op="打印10月日期" to_port="through 1"/>
+          <connect from_op="打印10月日期" from_port="through 1" to_op="清理内存 (3)" to_port="through 1"/>
+          <connect from_op="清理内存 (3)" from_port="through 1" to_op="处理10月某一天" to_port="in 1"/>
+          <connect from_op="处理10月某一天" from_port="out 1" to_port="output 1"/>
+          <portSpacing port="source_input 1" spacing="0"/>
+          <portSpacing port="source_input 2" spacing="0"/>
+          <portSpacing port="sink_output 1" spacing="0"/>
+          <portSpacing port="sink_output 2" spacing="0"/>
+        </process>
+      </operator>
+      <operator activated="true" class="append" compatibility="5.3.013" expanded="true" height="112" name="合并3个月数据" width="90" x="849" y="30">
+        <parameter key="datamanagement" value="double_array"/>
+        <parameter key="merge_type" value="all"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="5.3.013" expanded="true" height="60" name="保存全数据原始表" width="90" x="983" y="30">
+        <parameter key="repository_entry" value="db-all-org"/>
+      </operator>
+      <connect from_op="设置8月宏" from_port="through 1" to_op="对8月每天循环" to_port="input 1"/>
+      <connect from_op="对8月每天循环" from_port="output 1" to_op="合并3个月数据" to_port="example set 1"/>
+      <connect from_op="设置9月宏" from_port="through 1" to_op="对9月每天循环" to_port="input 1"/>
+      <connect from_op="对9月每天循环" from_port="output 1" to_op="合并3个月数据" to_port="example set 2"/>
+      <connect from_op="设置10月宏" from_port="through 1" to_op="对10月每天循环" to_port="input 1"/>
+      <connect from_op="对10月每天循环" from_port="output 1" to_op="合并3个月数据" to_port="example set 3"/>
+      <connect from_op="合并3个月数据" from_port="merged set" to_op="保存全数据原始表" to_port="input"/>
+      <connect from_op="保存全数据原始表" from_port="through" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+    </process>
+  </operator>
+</process>
