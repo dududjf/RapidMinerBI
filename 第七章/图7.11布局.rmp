@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<process version="5.3.013">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="5.3.013" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="retrieve" compatibility="5.3.013" expanded="true" height="60" name="读入完整分析表" width="90" x="45" y="30">
+        <parameter key="repository_entry" value="complete_analysis"/>
+      </operator>
+      <operator activated="true" class="misc:nominal_to_binominal_aggregation" compatibility="5.2.000" expanded="true" height="76" name="生成二元属性" width="90" x="179" y="30">
+        <parameter key="attribute_to_be_converted" value="Page"/>
+        <enumeration key="attributes_to_be_converted">
+          <parameter key="nominal_attribute" value="referer"/>
+          <parameter key="nominal_attribute" value="first_dir"/>
+        </enumeration>
+        <parameter key="use_underscore_in_name" value="true"/>
+        <enumeration key="attributes_for_making_groups">
+          <parameter key="nominal_attribute" value="VisitID"/>
+        </enumeration>
+      </operator>
+      <operator activated="true" class="set_role" compatibility="5.3.013" expanded="true" height="76" name="设置类标和ID属性" width="90" x="313" y="30">
+        <parameter key="attribute_name" value="Page_confirm.asp"/>
+        <parameter key="target_role" value="label"/>
+        <list key="set_additional_roles">
+          <parameter key="VisitID" value="id"/>
+        </list>
+      </operator>
+      <operator activated="true" class="misc:ext_tree_to_rules" compatibility="5.2.000" expanded="true" height="76" name="通过决策树生成规则模型" width="90" x="447" y="30">
+        <process expanded="true">
+          <operator activated="true" class="decision_tree" compatibility="5.3.013" expanded="true" height="76" name="生成决策树" width="90" x="112" y="30">
+            <parameter key="criterion" value="gain_ratio"/>
+            <parameter key="minimal_size_for_split" value="4"/>
+            <parameter key="minimal_leaf_size" value="2"/>
+            <parameter key="minimal_gain" value="0.1"/>
+            <parameter key="maximal_depth" value="7"/>
+            <parameter key="confidence" value="0.25"/>
+            <parameter key="number_of_prepruning_alternatives" value="3"/>
+            <parameter key="no_pre_pruning" value="true"/>
+            <parameter key="no_pruning" value="false"/>
+          </operator>
+          <connect from_port="training set" to_op="生成决策树" to_port="training set"/>
+          <connect from_op="生成决策树" from_port="model" to_port="model"/>
+          <portSpacing port="source_training set" spacing="0"/>
+          <portSpacing port="sink_model" spacing="0"/>
+        </process>
+      </operator>
+      <connect from_op="读入完整分析表" from_port="output" to_op="生成二元属性" to_port="example set input"/>
+      <connect from_op="生成二元属性" from_port="example set output" to_op="设置类标和ID属性" to_port="example set input"/>
+      <connect from_op="设置类标和ID属性" from_port="example set output" to_op="通过决策树生成规则模型" to_port="training set"/>
+      <connect from_op="通过决策树生成规则模型" from_port="model" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+    </process>
+  </operator>
+</process>
