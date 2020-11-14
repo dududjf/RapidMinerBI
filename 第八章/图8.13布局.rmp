@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<process version="5.3.013">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="5.3.013" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="retrieve" compatibility="5.3.013" expanded="true" height="60" name="读入全数据整理表" width="90" x="45" y="30">
+        <parameter key="repository_entry" value="db-all-clean"/>
+      </operator>
+      <operator activated="true" class="sort" compatibility="5.3.013" expanded="true" height="76" name="按日期降序排序" width="90" x="179" y="30">
+        <parameter key="attribute_name" value="日期"/>
+        <parameter key="sorting_direction" value="decreasing"/>
+      </operator>
+      <operator activated="true" class="remove_duplicates" compatibility="5.3.013" expanded="true" height="76" name="各项目仅保留最近的记录" width="90" x="313" y="30">
+        <parameter key="attribute_filter_type" value="single"/>
+        <parameter key="attribute" value="链接"/>
+        <parameter key="attributes" value=""/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="attribute_value"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="time"/>
+        <parameter key="block_type" value="attribute_block"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="value_matrix_row_start"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+        <parameter key="treat_missing_values_as_duplicates" value="false"/>
+      </operator>
+      <operator activated="true" class="generate_attributes" compatibility="5.3.013" expanded="true" height="76" name="添加实际标志属性" width="90" x="447" y="30">
+        <list key="function_descriptions">
+          <parameter key="实际标志" value="if(剩余天数==0 &amp;&amp; 筹款进度&lt;100,&quot;失败&quot;,if(筹款进度&gt;=100,&quot;成功&quot;,&quot;待定&quot;))"/>
+        </list>
+        <parameter key="use_standard_constants" value="true"/>
+        <parameter key="keep_all" value="true"/>
+      </operator>
+      <operator activated="true" class="select_attributes" compatibility="5.3.013" expanded="true" height="76" name="保留非日期相关属性" width="90" x="581" y="30">
+        <parameter key="attribute_filter_type" value="subset"/>
+        <parameter key="attribute" value=""/>
+        <parameter key="attributes" value="城市|实际标志|摘要|标签集|标题|省份|链接|"/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="attribute_value"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="time"/>
+        <parameter key="block_type" value="attribute_block"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="value_matrix_row_start"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="5.3.013" expanded="true" height="60" name="保存成败分析表" width="90" x="715" y="30">
+        <parameter key="repository_entry" value="db-analysis"/>
+      </operator>
+      <connect from_op="读入全数据整理表" from_port="output" to_op="按日期降序排序" to_port="example set input"/>
+      <connect from_op="按日期降序排序" from_port="example set output" to_op="各项目仅保留最近的记录" to_port="example set input"/>
+      <connect from_op="各项目仅保留最近的记录" from_port="example set output" to_op="添加实际标志属性" to_port="example set input"/>
+      <connect from_op="添加实际标志属性" from_port="example set output" to_op="保留非日期相关属性" to_port="example set input"/>
+      <connect from_op="保留非日期相关属性" from_port="example set output" to_op="保存成败分析表" to_port="input"/>
+      <connect from_op="保存成败分析表" from_port="through" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+    </process>
+  </operator>
+</process>

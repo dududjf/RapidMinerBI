@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<process version="5.3.013">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="5.3.013" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="retrieve" compatibility="5.3.013" expanded="true" height="60" name="读入趋势分析表" width="90" x="581" y="30">
+        <parameter key="repository_entry" value="db-trend-analysis"/>
+      </operator>
+      <operator activated="true" class="misc:generate_attributes_with_types" compatibility="5.2.000" expanded="true" height="76" name="添加超进度属性" width="90" x="715" y="30">
+        <list key="function_descriptions">
+          <parameter key="超进度" value="if(趋势值&gt;1, &quot;true&quot;, &quot;false&quot;).binominal"/>
+        </list>
+        <parameter key="use_standard_constants" value="true"/>
+        <parameter key="keep_all" value="true"/>
+      </operator>
+      <operator activated="true" class="select_attributes" compatibility="5.3.013" expanded="true" height="76" name="删除趋势值属性" width="90" x="849" y="30">
+        <parameter key="attribute_filter_type" value="single"/>
+        <parameter key="attribute" value="趋势值"/>
+        <parameter key="attributes" value="趋势值|标题|摘要"/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="attribute_value"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="time"/>
+        <parameter key="block_type" value="attribute_block"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="value_matrix_row_start"/>
+        <parameter key="invert_selection" value="true"/>
+        <parameter key="include_special_attributes" value="false"/>
+      </operator>
+      <operator activated="true" class="nominal_to_text" compatibility="5.3.013" expanded="true" height="76" name="将标题摘要转成文本类型" width="90" x="581" y="120">
+        <parameter key="attribute_filter_type" value="subset"/>
+        <parameter key="attribute" value=""/>
+        <parameter key="attributes" value="摘要|标题|"/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="nominal"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="file_path"/>
+        <parameter key="block_type" value="single_value"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="single_value"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+      </operator>
+      <operator activated="true" class="text:process_document_from_data" compatibility="5.3.002" expanded="true" height="76" name="将文本转成二元向量" width="90" x="715" y="120">
+        <parameter key="create_word_vector" value="true"/>
+        <parameter key="vector_creation" value="Binary Term Occurrences"/>
+        <parameter key="add_meta_information" value="true"/>
+        <parameter key="keep_text" value="false"/>
+        <parameter key="prune_method" value="percentual"/>
+        <parameter key="prune_below_percent" value="1.0"/>
+        <parameter key="prune_above_percent" value="20.0"/>
+        <parameter key="prune_below_rank" value="0.05"/>
+        <parameter key="prune_above_rank" value="0.95"/>
+        <parameter key="datamanagement" value="double_sparse_array"/>
+        <parameter key="select_attributes_and_weights" value="false"/>
+        <list key="specify_weights"/>
+        <process expanded="true">
+          <operator activated="true" class="chprocess:ch_tokenize" compatibility="5.2.000" expanded="true" height="60" name="对中文文本分词" width="90" x="45" y="30">
+            <parameter key="segmenter_mode" value="SEARCH"/>
+            <parameter key="encoding" value="SYSTEM"/>
+          </operator>
+          <operator activated="true" class="text:filter_by_length" compatibility="5.3.002" expanded="true" height="60" name="按长度过滤单词" width="90" x="180" y="30">
+            <parameter key="min_chars" value="2"/>
+            <parameter key="max_chars" value="25"/>
+          </operator>
+          <operator activated="true" class="text:replace_tokens" compatibility="5.3.002" expanded="true" height="60" name="单词前添加关键词标志" width="90" x="313" y="30">
+            <list key="replace_dictionary">
+              <parameter key=".+" value="关键词_$0"/>
+            </list>
+          </operator>
+          <connect from_port="document" to_op="对中文文本分词" to_port="document"/>
+          <connect from_op="对中文文本分词" from_port="document" to_op="按长度过滤单词" to_port="document"/>
+          <connect from_op="按长度过滤单词" from_port="document" to_op="单词前添加关键词标志" to_port="document"/>
+          <connect from_op="单词前添加关键词标志" from_port="document" to_port="document 1"/>
+          <portSpacing port="source_document" spacing="0"/>
+          <portSpacing port="sink_document 1" spacing="0"/>
+          <portSpacing port="sink_document 2" spacing="0"/>
+        </process>
+      </operator>
+      <operator activated="true" class="numerical_to_binominal" compatibility="5.3.013" expanded="true" height="76" name="数值转成布尔值" width="90" x="849" y="120">
+        <parameter key="attribute_filter_type" value="regular_expression"/>
+        <parameter key="attribute" value=""/>
+        <parameter key="attributes" value=""/>
+        <parameter key="regular_expression" value="关键词_.*"/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="numeric"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="real"/>
+        <parameter key="block_type" value="value_series"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="value_series_end"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+        <parameter key="min" value="0.0"/>
+        <parameter key="max" value="0.0"/>
+      </operator>
+      <operator activated="true" class="declare_missing_value" compatibility="5.3.013" expanded="true" height="76" name="将?设成遗漏值" width="90" x="983" y="120">
+        <parameter key="attribute_filter_type" value="subset"/>
+        <parameter key="attribute" value=""/>
+        <parameter key="attributes" value="|城市|省份"/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="attribute_value"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="time"/>
+        <parameter key="block_type" value="attribute_block"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="value_matrix_row_start"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+        <parameter key="mode" value="nominal"/>
+        <parameter key="nominal_value" value="?"/>
+        <parameter key="expression_value" value=""/>
+      </operator>
+      <operator activated="true" class="remove_unused_values" compatibility="5.3.013" expanded="true" height="94" name="清除没用属性值" width="90" x="581" y="210">
+        <parameter key="return_preprocessing_model" value="false"/>
+        <parameter key="create_view" value="false"/>
+        <parameter key="attribute_filter_type" value="subset"/>
+        <parameter key="attribute" value=""/>
+        <parameter key="attributes" value="|城市|省份"/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="nominal"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="file_path"/>
+        <parameter key="block_type" value="single_value"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="single_value"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+        <parameter key="sort_alphabetically" value="true"/>
+      </operator>
+      <operator activated="true" class="split" compatibility="5.3.013" expanded="true" height="76" name="切分标签集" width="90" x="715" y="210">
+        <parameter key="attribute_filter_type" value="single"/>
+        <parameter key="attribute" value="标签集"/>
+        <parameter key="attributes" value=""/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="nominal"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="file_path"/>
+        <parameter key="block_type" value="single_value"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="single_value"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+        <parameter key="split_pattern" value="\|"/>
+        <parameter key="split_mode" value="ordered_split"/>
+      </operator>
+      <operator activated="true" class="misc:combined_nominal_to_binominal" compatibility="5.2.000" expanded="true" height="76" name="二元化切分后的标签属性" width="90" x="849" y="210">
+        <parameter key="attribute_filter_type" value="regular_expression"/>
+        <parameter key="attribute" value=""/>
+        <parameter key="attributes" value="项目标签_1|项目标签_10|项目标签_11|项目标签_12|项目标签_2|项目标签_3|项目标签_4|项目标签_5|项目标签_6|项目标签_7|项目标签_8|项目标签_9"/>
+        <parameter key="regular_expression" value="标签集_\d+"/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="nominal"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="file_path"/>
+        <parameter key="block_type" value="single_value"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="single_value"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+        <parameter key="name_prefix" value="标签"/>
+        <parameter key="use_underscore_in_name" value="true"/>
+      </operator>
+      <operator activated="true" class="set_role" compatibility="5.3.013" expanded="true" height="76" name="链接设成id角色" width="90" x="983" y="210">
+        <parameter key="attribute_name" value="链接"/>
+        <parameter key="target_role" value="id"/>
+        <list key="set_additional_roles"/>
+      </operator>
+      <operator activated="true" class="misc:flat_apriori" compatibility="5.2.000" expanded="true" height="76" name="挖掘频繁项集" width="90" x="715" y="300">
+        <parameter key="find_min_number_of_itemsets" value="true"/>
+        <parameter key="min_number_of_itemsets" value="100"/>
+        <parameter key="max_number_of_retries" value="15"/>
+        <parameter key="min_support_count" value="5"/>
+        <parameter key="min_support" value="0.01"/>
+        <parameter key="max_items" value="-1"/>
+        <parameter key="postive_value" value="true"/>
+        <list key="must_contain_either">
+          <parameter key="超进度" value="true"/>
+        </list>
+      </operator>
+      <operator activated="true" class="misc:create_car" compatibility="5.2.000" expanded="true" height="76" name="生成分类关联规则" width="90" x="849" y="345">
+        <parameter key="consequence_item" value="超进度"/>
+        <parameter key="gain_theta" value="2.0"/>
+        <parameter key="laplace_k" value="1.0"/>
+      </operator>
+      <operator activated="true" class="misc:association_to_rules" compatibility="5.2.000" expanded="true" height="94" name="将关联规则集转成规则模型" width="90" x="983" y="300">
+        <parameter key="consequence_item" value="超进度"/>
+        <parameter key="lift_tolerant_loss" value="3.0"/>
+        <parameter key="confidence_threshold" value="0.5"/>
+      </operator>
+      <connect from_op="读入趋势分析表" from_port="output" to_op="添加超进度属性" to_port="example set input"/>
+      <connect from_op="添加超进度属性" from_port="example set output" to_op="删除趋势值属性" to_port="example set input"/>
+      <connect from_op="删除趋势值属性" from_port="example set output" to_op="将标题摘要转成文本类型" to_port="example set input"/>
+      <connect from_op="将标题摘要转成文本类型" from_port="example set output" to_op="将文本转成二元向量" to_port="example set"/>
+      <connect from_op="将文本转成二元向量" from_port="example set" to_op="数值转成布尔值" to_port="example set input"/>
+      <connect from_op="数值转成布尔值" from_port="example set output" to_op="将?设成遗漏值" to_port="example set input"/>
+      <connect from_op="将?设成遗漏值" from_port="example set output" to_op="清除没用属性值" to_port="example set input"/>
+      <connect from_op="清除没用属性值" from_port="example set output" to_op="切分标签集" to_port="example set input"/>
+      <connect from_op="切分标签集" from_port="example set output" to_op="二元化切分后的标签属性" to_port="example set input"/>
+      <connect from_op="二元化切分后的标签属性" from_port="example set output" to_op="链接设成id角色" to_port="example set input"/>
+      <connect from_op="链接设成id角色" from_port="example set output" to_op="挖掘频繁项集" to_port="example set"/>
+      <connect from_op="挖掘频繁项集" from_port="example set" to_op="将关联规则集转成规则模型" to_port="example set"/>
+      <connect from_op="挖掘频繁项集" from_port="frequent sets" to_op="生成分类关联规则" to_port="item sets"/>
+      <connect from_op="生成分类关联规则" from_port="rules" to_op="将关联规则集转成规则模型" to_port="rules"/>
+      <connect from_op="将关联规则集转成规则模型" from_port="model" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+    </process>
+  </operator>
+</process>

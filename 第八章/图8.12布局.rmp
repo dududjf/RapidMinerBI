@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<process version="5.3.013">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="5.3.013" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="retrieve" compatibility="5.3.013" expanded="true" height="60" name="读入全数据原始表" width="90" x="447" y="30">
+        <parameter key="repository_entry" value="db-all-org"/>
+      </operator>
+      <operator activated="true" class="text:generate_extract" compatibility="5.3.002" expanded="true" height="60" name="抽取省份和城市" width="90" x="581" y="30">
+        <parameter key="source_attribute" value="标签集"/>
+        <parameter key="query_type" value="Regular Region"/>
+        <list key="string_machting_queries">
+          <parameter key="省份" value="|.|"/>
+        </list>
+        <parameter key="attribute_type" value="Nominal"/>
+        <list key="regular_expression_queries"/>
+        <list key="regular_region_queries">
+          <parameter key="省份" value="(?&lt;=^\\|).(?=\\|)"/>
+          <parameter key="城市" value="(?&lt;=^\\|\.{1,4}\\|).(?=\\|)"/>
+        </list>
+        <list key="xpath_queries"/>
+        <list key="namespaces"/>
+        <parameter key="ignore_CDATA" value="true"/>
+        <parameter key="assume_html" value="true"/>
+        <list key="index_queries"/>
+      </operator>
+      <operator activated="true" class="read_csv" compatibility="5.3.013" expanded="true" height="60" name="读入城市文件" width="90" x="447" y="120">
+        <parameter key="csv_file" value="C:\du-work\众筹网数据分析\城市.txt"/>
+        <parameter key="column_separators" value=";"/>
+        <parameter key="trim_lines" value="false"/>
+        <parameter key="use_quotes" value="false"/>
+        <parameter key="quotes_character" value="&quot;"/>
+        <parameter key="escape_character" value="\"/>
+        <parameter key="skip_comments" value="false"/>
+        <parameter key="comment_characters" value="#"/>
+        <parameter key="parse_numbers" value="true"/>
+        <parameter key="decimal_character" value="."/>
+        <parameter key="grouped_digits" value="false"/>
+        <parameter key="grouping_character" value=","/>
+        <parameter key="date_format" value=""/>
+        <parameter key="first_row_as_names" value="false"/>
+        <list key="annotations"/>
+        <parameter key="time_zone" value="SYSTEM"/>
+        <parameter key="locale" value="English (United States)"/>
+        <parameter key="encoding" value="GBK"/>
+        <list key="data_set_meta_data_information">
+          <parameter key="0" value="city.true.polynominal.attribute"/>
+        </list>
+        <parameter key="read_not_matching_values_as_missings" value="true"/>
+        <parameter key="datamanagement" value="double_array"/>
+      </operator>
+      <operator activated="true" class="generate_attributes" compatibility="5.3.013" expanded="true" height="76" name="添加标记属性" width="90" x="581" y="120">
+        <list key="function_descriptions">
+          <parameter key="flag" value="1"/>
+        </list>
+        <parameter key="use_standard_constants" value="true"/>
+        <parameter key="keep_all" value="true"/>
+      </operator>
+      <operator activated="true" class="join" compatibility="5.3.013" expanded="true" height="76" name="左对齐合并" width="90" x="715" y="75">
+        <parameter key="remove_double_attributes" value="true"/>
+        <parameter key="join_type" value="left"/>
+        <parameter key="use_id_attribute_as_key" value="false"/>
+        <list key="key_attributes">
+          <parameter key="城市" value="city"/>
+        </list>
+        <parameter key="keep_both_join_attributes" value="false"/>
+      </operator>
+      <operator activated="true" class="generate_attributes" compatibility="5.3.013" expanded="true" height="76" name="过滤城市和更改标签集" width="90" x="849" y="75">
+        <list key="function_descriptions">
+          <parameter key="城市" value="if(flag&gt;0,城市,&quot;?&quot;)"/>
+          <parameter key="标签集" value="replace(replace(upper(replace(replace(标签集, concat(&quot;|&quot;,省份,&quot;|&quot;,城市,&quot;|&quot;), &quot;&quot;), concat(&quot;|&quot;,省份,&quot;|&quot;), &quot;&quot;)), &quot;PM2|5&quot;, &quot;PM2.5&quot;), &quot;4|3寸屏&quot;, &quot;4.3寸屏&quot;)"/>
+        </list>
+        <parameter key="use_standard_constants" value="true"/>
+        <parameter key="keep_all" value="true"/>
+      </operator>
+      <operator activated="true" class="select_attributes" compatibility="5.3.013" expanded="true" height="76" name="删除标记属性" width="90" x="983" y="75">
+        <parameter key="attribute_filter_type" value="single"/>
+        <parameter key="attribute" value="flag"/>
+        <parameter key="attributes" value=""/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="attribute_value"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="time"/>
+        <parameter key="block_type" value="attribute_block"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="value_matrix_row_start"/>
+        <parameter key="invert_selection" value="true"/>
+        <parameter key="include_special_attributes" value="false"/>
+      </operator>
+      <operator activated="true" class="replace" compatibility="5.3.013" expanded="true" height="76" name="清除标签集最后的“|”" width="90" x="581" y="210">
+        <parameter key="attribute_filter_type" value="single"/>
+        <parameter key="attribute" value="标签集"/>
+        <parameter key="attributes" value=""/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="nominal"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="file_path"/>
+        <parameter key="block_type" value="single_value"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="single_value"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+        <parameter key="replace_what" value="\|$"/>
+      </operator>
+      <operator activated="true" class="declare_missing_value" compatibility="5.3.013" expanded="true" height="76" name="将?值处理成遗漏值" width="90" x="715" y="210">
+        <parameter key="attribute_filter_type" value="subset"/>
+        <parameter key="attribute" value="省份"/>
+        <parameter key="attributes" value="标签集|省份||城市"/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="attribute_value"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="time"/>
+        <parameter key="block_type" value="attribute_block"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="value_matrix_row_start"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+        <parameter key="mode" value="nominal"/>
+        <parameter key="nominal_value" value="?"/>
+        <parameter key="expression_value" value="&quot;.?&quot;"/>
+      </operator>
+      <operator activated="true" class="remove_unused_values" compatibility="5.3.013" expanded="true" height="94" name="删除没用的属性值" width="90" x="849" y="210">
+        <parameter key="return_preprocessing_model" value="false"/>
+        <parameter key="create_view" value="false"/>
+        <parameter key="attribute_filter_type" value="all"/>
+        <parameter key="attribute" value=""/>
+        <parameter key="attributes" value=""/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="nominal"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="file_path"/>
+        <parameter key="block_type" value="single_value"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="single_value"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+        <parameter key="sort_alphabetically" value="true"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="5.3.013" expanded="true" height="60" name="保存全数据整理表" width="90" x="983" y="210">
+        <parameter key="repository_entry" value="db-all-clean"/>
+      </operator>
+      <connect from_op="读入全数据原始表" from_port="output" to_op="抽取省份和城市" to_port="Example Set"/>
+      <connect from_op="抽取省份和城市" from_port="Example Set" to_op="左对齐合并" to_port="left"/>
+      <connect from_op="读入城市文件" from_port="output" to_op="添加标记属性" to_port="example set input"/>
+      <connect from_op="添加标记属性" from_port="example set output" to_op="左对齐合并" to_port="right"/>
+      <connect from_op="左对齐合并" from_port="join" to_op="过滤城市和更改标签集" to_port="example set input"/>
+      <connect from_op="过滤城市和更改标签集" from_port="example set output" to_op="删除标记属性" to_port="example set input"/>
+      <connect from_op="删除标记属性" from_port="example set output" to_op="清除标签集最后的“|”" to_port="example set input"/>
+      <connect from_op="清除标签集最后的“|”" from_port="example set output" to_op="将?值处理成遗漏值" to_port="example set input"/>
+      <connect from_op="将?值处理成遗漏值" from_port="example set output" to_op="删除没用的属性值" to_port="example set input"/>
+      <connect from_op="删除没用的属性值" from_port="example set output" to_op="保存全数据整理表" to_port="input"/>
+      <connect from_op="保存全数据整理表" from_port="through" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+    </process>
+  </operator>
+</process>

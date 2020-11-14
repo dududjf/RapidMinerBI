@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<process version="5.3.013">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="5.3.013" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="retrieve" compatibility="5.3.013" expanded="true" height="60" name="读入全数据整理表" width="90" x="581" y="30">
+        <parameter key="repository_entry" value="db-all-clean"/>
+      </operator>
+      <operator activated="true" class="misc:filter_examples_by_function" compatibility="5.2.000" expanded="true" height="76" name="保留剩余天数非空的记录" width="90" x="715" y="30">
+        <parameter key="boolean_function" value="!missing(剩余天数)"/>
+        <parameter key="invert_filter" value="false"/>
+      </operator>
+      <operator activated="true" class="sort" compatibility="5.3.013" expanded="true" height="76" name="按日期排序" width="90" x="849" y="30">
+        <parameter key="attribute_name" value="日期"/>
+        <parameter key="sorting_direction" value="increasing"/>
+      </operator>
+      <operator activated="true" class="remove_duplicates" compatibility="5.3.013" expanded="true" height="76" name="各项目仅保留最早的记录" width="90" x="447" y="120">
+        <parameter key="attribute_filter_type" value="single"/>
+        <parameter key="attribute" value="链接"/>
+        <parameter key="attributes" value=""/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="attribute_value"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="time"/>
+        <parameter key="block_type" value="attribute_block"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="value_matrix_row_start"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="true"/>
+        <parameter key="treat_missing_values_as_duplicates" value="false"/>
+      </operator>
+      <operator activated="true" class="misc:filter_examples_by_function" compatibility="5.2.000" expanded="true" height="76" name="仅保留在2016-8-1后发布的项目" width="90" x="581" y="120">
+        <parameter key="boolean_function" value="date_diff(date_parse_custom(&quot;2016-08-01&quot;,&quot;yyyy-MM-dd&quot;),日期)&gt;0"/>
+        <parameter key="invert_filter" value="false"/>
+      </operator>
+      <operator activated="true" class="generate_attributes" compatibility="5.3.013" expanded="true" height="76" name="添加筹款天数和起始日属性" width="90" x="715" y="120">
+        <list key="function_descriptions">
+          <parameter key="筹款天数" value="1+剩余天数"/>
+          <parameter key="起始日" value="日期"/>
+        </list>
+        <parameter key="use_standard_constants" value="true"/>
+        <parameter key="keep_all" value="true"/>
+      </operator>
+      <operator activated="true" class="select_attributes" compatibility="5.3.013" expanded="true" height="76" name="仅保留用于合并的属性" width="90" x="849" y="120">
+        <parameter key="attribute_filter_type" value="subset"/>
+        <parameter key="attribute" value=""/>
+        <parameter key="attributes" value="|筹款天数|起始日|链接"/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="attribute_value"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="time"/>
+        <parameter key="block_type" value="attribute_block"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="value_matrix_row_start"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+      </operator>
+      <operator activated="true" class="join" compatibility="5.3.013" expanded="true" height="76" name="合并筹款天数和起始日属性" width="90" x="983" y="120">
+        <parameter key="remove_double_attributes" value="true"/>
+        <parameter key="join_type" value="inner"/>
+        <parameter key="use_id_attribute_as_key" value="false"/>
+        <list key="key_attributes">
+          <parameter key="链接" value="链接"/>
+        </list>
+        <parameter key="keep_both_join_attributes" value="false"/>
+      </operator>
+      <operator activated="true" class="misc:generate_attributes_with_types" compatibility="5.2.000" expanded="true" height="76" name="添加辅助属性" width="90" x="581" y="210">
+        <list key="function_descriptions">
+          <parameter key="筹款比例" value="筹款进度/100.real"/>
+          <parameter key="天数比例" value="(date_diff(起始日,日期)/(1000*3600*24)+1)/筹款天数.real"/>
+          <parameter key="天数比例平方" value="天数比例*天数比例.real"/>
+          <parameter key="天数比例乘筹款比例" value="天数比例*筹款比例.real"/>
+        </list>
+        <parameter key="use_standard_constants" value="true"/>
+        <parameter key="keep_all" value="true"/>
+      </operator>
+      <operator activated="true" class="aggregate" compatibility="5.2.008" expanded="true" height="76" name="汇总辅助属性" width="90" x="715" y="210">
+        <parameter key="use_default_aggregation" value="false"/>
+        <parameter key="attribute_filter_type" value="all"/>
+        <parameter key="attribute" value=""/>
+        <parameter key="attributes" value=""/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="attribute_value"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="time"/>
+        <parameter key="block_type" value="attribute_block"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="value_matrix_row_start"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+        <parameter key="default_aggregation_function" value="average"/>
+        <list key="aggregation_attributes">
+          <parameter key="链接" value="count"/>
+          <parameter key="天数比例平方" value="sum"/>
+          <parameter key="天数比例" value="sum"/>
+          <parameter key="天数比例乘筹款比例" value="sum"/>
+          <parameter key="筹款比例" value="sum"/>
+        </list>
+        <parameter key="group_by_attributes" value="链接"/>
+        <parameter key="count_all_combinations" value="false"/>
+        <parameter key="only_distinct" value="false"/>
+        <parameter key="ignore_missings" value="true"/>
+      </operator>
+      <operator activated="true" class="rename" compatibility="5.3.013" expanded="true" height="76" name="将汇总属性更名" width="90" x="849" y="210">
+        <parameter key="old_name" value="count(链接)"/>
+        <parameter key="new_name" value="n"/>
+        <list key="rename_additional_attributes">
+          <parameter key="sum(天数比例)" value="sigma_x"/>
+          <parameter key="sum(天数比例平方)" value="sigma_x2"/>
+          <parameter key="sum(天数比例乘筹款比例)" value="sigma_xy"/>
+          <parameter key="sum(筹款比例)" value="sigma_y"/>
+        </list>
+      </operator>
+      <operator activated="true" class="generate_attributes" compatibility="5.3.013" expanded="true" height="76" name="添加趋势值属性" width="90" x="983" y="210">
+        <list key="function_descriptions">
+          <parameter key="趋势值" value="(n*sigma_xy-sigma_x*sigma_y) / (n*sigma_x2-sigma_x*sigma_x)"/>
+        </list>
+        <parameter key="use_standard_constants" value="true"/>
+        <parameter key="keep_all" value="true"/>
+      </operator>
+      <operator activated="true" class="misc:filter_examples_by_function" compatibility="5.2.000" expanded="true" height="76" name="保留有趋势值的项目记录" width="90" x="581" y="300">
+        <parameter key="boolean_function" value="!missing(趋势值)"/>
+        <parameter key="invert_filter" value="false"/>
+      </operator>
+      <operator activated="true" class="select_attributes" compatibility="5.3.013" expanded="true" height="76" name="仅保留链接和趋势值属性" width="90" x="715" y="300">
+        <parameter key="attribute_filter_type" value="subset"/>
+        <parameter key="attribute" value=""/>
+        <parameter key="attributes" value="趋势值|链接"/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="attribute_value"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="time"/>
+        <parameter key="block_type" value="attribute_block"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="value_matrix_row_start"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="true"/>
+      </operator>
+      <operator activated="true" class="retrieve" compatibility="5.3.013" expanded="true" height="60" name="读入成败分析表" width="90" x="715" y="390">
+        <parameter key="repository_entry" value="db-analysis"/>
+      </operator>
+      <operator activated="true" class="join" compatibility="5.3.013" expanded="true" height="76" name="合并趋势值属性" width="90" x="849" y="300">
+        <parameter key="remove_double_attributes" value="true"/>
+        <parameter key="join_type" value="inner"/>
+        <parameter key="use_id_attribute_as_key" value="false"/>
+        <list key="key_attributes">
+          <parameter key="链接" value="链接"/>
+        </list>
+        <parameter key="keep_both_join_attributes" value="false"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="5.3.013" expanded="true" height="60" name="保存趋势分析表" width="90" x="983" y="300">
+        <parameter key="repository_entry" value="db-trend-analysis"/>
+      </operator>
+      <connect from_op="读入全数据整理表" from_port="output" to_op="保留剩余天数非空的记录" to_port="example set input"/>
+      <connect from_op="保留剩余天数非空的记录" from_port="example set output" to_op="按日期排序" to_port="example set input"/>
+      <connect from_op="按日期排序" from_port="example set output" to_op="各项目仅保留最早的记录" to_port="example set input"/>
+      <connect from_op="按日期排序" from_port="original" to_op="合并筹款天数和起始日属性" to_port="left"/>
+      <connect from_op="各项目仅保留最早的记录" from_port="example set output" to_op="仅保留在2016-8-1后发布的项目" to_port="example set input"/>
+      <connect from_op="仅保留在2016-8-1后发布的项目" from_port="example set output" to_op="添加筹款天数和起始日属性" to_port="example set input"/>
+      <connect from_op="添加筹款天数和起始日属性" from_port="example set output" to_op="仅保留用于合并的属性" to_port="example set input"/>
+      <connect from_op="仅保留用于合并的属性" from_port="example set output" to_op="合并筹款天数和起始日属性" to_port="right"/>
+      <connect from_op="合并筹款天数和起始日属性" from_port="join" to_op="添加辅助属性" to_port="example set input"/>
+      <connect from_op="添加辅助属性" from_port="example set output" to_op="汇总辅助属性" to_port="example set input"/>
+      <connect from_op="汇总辅助属性" from_port="example set output" to_op="将汇总属性更名" to_port="example set input"/>
+      <connect from_op="将汇总属性更名" from_port="example set output" to_op="添加趋势值属性" to_port="example set input"/>
+      <connect from_op="添加趋势值属性" from_port="example set output" to_op="保留有趋势值的项目记录" to_port="example set input"/>
+      <connect from_op="保留有趋势值的项目记录" from_port="example set output" to_op="仅保留链接和趋势值属性" to_port="example set input"/>
+      <connect from_op="仅保留链接和趋势值属性" from_port="example set output" to_op="合并趋势值属性" to_port="left"/>
+      <connect from_op="读入成败分析表" from_port="output" to_op="合并趋势值属性" to_port="right"/>
+      <connect from_op="合并趋势值属性" from_port="join" to_op="保存趋势分析表" to_port="input"/>
+      <connect from_op="保存趋势分析表" from_port="through" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+    </process>
+  </operator>
+</process>
