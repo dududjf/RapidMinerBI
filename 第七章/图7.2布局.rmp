@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<process version="5.3.013">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="5.3.013" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="read_csv" compatibility="5.3.013" expanded="true" height="60" name="读入网站日志" width="90" x="45" y="30">
+        <parameter key="csv_file" value="C:\du-work\商业智能\Chapter5\miis4book.log"/>
+        <parameter key="column_separators" value="\s"/>
+        <parameter key="trim_lines" value="false"/>
+        <parameter key="use_quotes" value="false"/>
+        <parameter key="quotes_character" value="&quot;"/>
+        <parameter key="escape_character" value="\"/>
+        <parameter key="skip_comments" value="true"/>
+        <parameter key="comment_characters" value="#"/>
+        <parameter key="parse_numbers" value="true"/>
+        <parameter key="decimal_character" value="."/>
+        <parameter key="grouped_digits" value="false"/>
+        <parameter key="grouping_character" value=","/>
+        <parameter key="date_format" value=""/>
+        <parameter key="first_row_as_names" value="false"/>
+        <list key="annotations">
+          <parameter key="0" value="Name"/>
+        </list>
+        <parameter key="time_zone" value="SYSTEM"/>
+        <parameter key="locale" value="English (United States)"/>
+        <parameter key="encoding" value="GBK"/>
+        <list key="data_set_meta_data_information">
+          <parameter key="0" value="date.true.polynominal.attribute"/>
+          <parameter key="1" value="time.true.polynominal.attribute"/>
+          <parameter key="2" value="c-ip.true.polynominal.attribute"/>
+          <parameter key="3" value="cs(Cookie).true.polynominal.attribute"/>
+          <parameter key="4" value="cs(Referer).true.polynominal.attribute"/>
+          <parameter key="5" value="cs(User-Agent).true.polynominal.attribute"/>
+          <parameter key="6" value="cs-bytes.true.integer.attribute"/>
+          <parameter key="7" value="cs-method.true.polynominal.attribute"/>
+          <parameter key="8" value="cs-uri-query.true.polynominal.attribute"/>
+          <parameter key="9" value="cs-uri-stem.true.polynominal.attribute"/>
+          <parameter key="10" value="cs-username.true.polynominal.attribute"/>
+          <parameter key="11" value="s-computername.true.polynominal.attribute"/>
+          <parameter key="12" value="s-ip.true.polynominal.attribute"/>
+          <parameter key="13" value="s-port.true.integer.attribute"/>
+          <parameter key="14" value="s-sitename.true.polynominal.attribute"/>
+          <parameter key="15" value="sc-bytes.true.integer.attribute"/>
+          <parameter key="16" value="sc-status.true.integer.attribute"/>
+          <parameter key="17" value="sc-win32-status.true.integer.attribute"/>
+          <parameter key="18" value="time-taken.true.integer.attribute"/>
+        </list>
+        <parameter key="read_not_matching_values_as_missings" value="true"/>
+        <parameter key="datamanagement" value="double_array"/>
+      </operator>
+      <operator activated="true" class="subprocess" compatibility="5.3.013" expanded="true" height="76" name="筛选重命名属性" width="90" x="179" y="30">
+        <process expanded="true">
+          <operator activated="true" class="select_attributes" compatibility="5.3.013" expanded="true" height="76" name="筛选属性" width="90" x="45" y="30">
+            <parameter key="attribute_filter_type" value="subset"/>
+            <parameter key="attribute" value=""/>
+            <parameter key="attributes" value="c-ip|cs(Cookie)|cs(Referer)|cs(User-Agent)|cs-uri-query|cs-uri-stem|date|time|"/>
+            <parameter key="use_except_expression" value="false"/>
+            <parameter key="value_type" value="attribute_value"/>
+            <parameter key="use_value_type_exception" value="false"/>
+            <parameter key="except_value_type" value="time"/>
+            <parameter key="block_type" value="attribute_block"/>
+            <parameter key="use_block_type_exception" value="false"/>
+            <parameter key="except_block_type" value="value_matrix_row_start"/>
+            <parameter key="invert_selection" value="false"/>
+            <parameter key="include_special_attributes" value="false"/>
+          </operator>
+          <operator activated="true" class="rename" compatibility="5.3.013" expanded="true" height="76" name="重命名属性" width="90" x="179" y="30">
+            <parameter key="old_name" value="c-ip"/>
+            <parameter key="new_name" value="IPAddress"/>
+            <list key="rename_additional_attributes">
+              <parameter key="cs(Cookie)" value="Cookie"/>
+              <parameter key="cs(Referer)" value="Referer"/>
+              <parameter key="cs(User-Agent)" value="UserAgent"/>
+              <parameter key="cs-uri-query" value="QueryString"/>
+              <parameter key="cs-uri-stem" value="Page"/>
+              <parameter key="date" value="Date"/>
+              <parameter key="time" value="Time"/>
+            </list>
+          </operator>
+          <connect from_port="in 1" to_op="筛选属性" to_port="example set input"/>
+          <connect from_op="筛选属性" from_port="example set output" to_op="重命名属性" to_port="example set input"/>
+          <connect from_op="重命名属性" from_port="example set output" to_port="out 1"/>
+          <portSpacing port="source_in 1" spacing="0"/>
+          <portSpacing port="source_in 2" spacing="0"/>
+          <portSpacing port="sink_out 1" spacing="0"/>
+          <portSpacing port="sink_out 2" spacing="0"/>
+        </process>
+      </operator>
+      <operator activated="true" class="generate_attributes" compatibility="5.3.013" expanded="true" height="76" name="添加时间戳" width="90" x="313" y="30">
+        <list key="function_descriptions">
+          <parameter key="Timestamp" value="date_diff(date_parse_custom(&quot;1/1/2000 00:00:00&quot;, &quot;dd/MM/yyyy HH:mm:ss&quot;), date_parse_custom(concat(Date,&quot; &quot;,Time), &quot;dd/MM/yyyy HH:mm:ss&quot;))/1000"/>
+        </list>
+        <parameter key="use_standard_constants" value="true"/>
+        <parameter key="keep_all" value="true"/>
+      </operator>
+      <operator activated="true" class="misc:filter_examples_by_function" compatibility="5.2.000" expanded="true" height="76" name="过滤主动发起请求" width="90" x="447" y="30">
+        <parameter key="boolean_function" value="ends(Page,&quot;asp&quot;) || ends(Page,&quot;htm&quot;) || ends(Page,&quot;html&quot;) || ends(Page,&quot;.txt&quot;) || ends(Page,&quot;.com&quot;)"/>
+        <parameter key="invert_filter" value="false"/>
+      </operator>
+      <operator activated="true" class="subprocess" compatibility="5.3.013" expanded="true" height="76" name="识别访问事件" width="90" x="581" y="30">
+        <process expanded="true">
+          <operator activated="true" class="sort" compatibility="5.3.013" expanded="true" height="76" name="按时间戳排序" width="90" x="45" y="30">
+            <parameter key="attribute_name" value="Timestamp"/>
+            <parameter key="sorting_direction" value="increasing"/>
+          </operator>
+          <operator activated="true" class="sort" compatibility="5.3.013" expanded="true" height="76" name="按浏览器排序" width="90" x="179" y="30">
+            <parameter key="attribute_name" value="UserAgent"/>
+            <parameter key="sorting_direction" value="increasing"/>
+          </operator>
+          <operator activated="true" class="sort" compatibility="5.3.013" expanded="true" height="76" name="按IP地址排序" width="90" x="313" y="30">
+            <parameter key="attribute_name" value="IPAddress"/>
+            <parameter key="sorting_direction" value="increasing"/>
+          </operator>
+          <operator activated="true" class="misc:generate_offset_attribute" compatibility="5.2.000" expanded="true" height="76" name="添加上一个时间戳" width="90" x="447" y="30">
+            <parameter key="attribute_to_be_added" value="Timestamp_up"/>
+            <parameter key="attribute_to_be_copied" value="Timestamp"/>
+            <parameter key="offset_to_the_current_example" value="-1"/>
+            <enumeration key="attributes_for_making_groups"/>
+          </operator>
+          <operator activated="true" class="misc:generate_offset_attribute" compatibility="5.2.000" expanded="true" height="76" name="添加上一个IP地址" width="90" x="581" y="30">
+            <parameter key="attribute_to_be_added" value="IPAddress_up"/>
+            <parameter key="attribute_to_be_copied" value="IPAddress"/>
+            <parameter key="offset_to_the_current_example" value="-1"/>
+            <enumeration key="attributes_for_making_groups"/>
+          </operator>
+          <operator activated="true" class="misc:generate_offset_attribute" compatibility="5.2.000" expanded="true" height="76" name="添加上一个浏览器" width="90" x="715" y="30">
+            <parameter key="attribute_to_be_added" value="UserAgent_up"/>
+            <parameter key="attribute_to_be_copied" value="UserAgent"/>
+            <parameter key="offset_to_the_current_example" value="-1"/>
+            <enumeration key="attributes_for_making_groups"/>
+          </operator>
+          <operator activated="true" class="misc:generate_incremental_attribute" compatibility="5.2.000" expanded="true" height="76" name="添加访问编号" width="90" x="849" y="30">
+            <parameter key="attribute_to_be_added" value="number"/>
+            <parameter key="incremental_value_expression" value="if(IPAddress!=IPAddress_up || UserAgent!=UserAgent_up || Timestamp-Timestamp_up&gt;1800, 1, 0)"/>
+            <enumeration key="attributes_for_making_groups"/>
+          </operator>
+          <operator activated="true" class="generate_attributes" compatibility="5.3.013" expanded="true" height="76" name="添加访问ID" width="90" x="715" y="120">
+            <list key="function_descriptions">
+              <parameter key="VisitID" value="concat(&quot;VisitID&quot;,str(number))"/>
+            </list>
+            <parameter key="use_standard_constants" value="true"/>
+            <parameter key="keep_all" value="true"/>
+          </operator>
+          <operator activated="true" class="select_attributes" compatibility="5.3.013" expanded="true" height="76" name="删除过渡属性" width="90" x="849" y="120">
+            <parameter key="attribute_filter_type" value="subset"/>
+            <parameter key="attribute" value=""/>
+            <parameter key="attributes" value="IPAddress_up|Timestamp_up|UserAgent_up||number"/>
+            <parameter key="use_except_expression" value="false"/>
+            <parameter key="value_type" value="attribute_value"/>
+            <parameter key="use_value_type_exception" value="false"/>
+            <parameter key="except_value_type" value="time"/>
+            <parameter key="block_type" value="attribute_block"/>
+            <parameter key="use_block_type_exception" value="false"/>
+            <parameter key="except_block_type" value="value_matrix_row_start"/>
+            <parameter key="invert_selection" value="true"/>
+            <parameter key="include_special_attributes" value="false"/>
+          </operator>
+          <connect from_port="in 1" to_op="按时间戳排序" to_port="example set input"/>
+          <connect from_op="按时间戳排序" from_port="example set output" to_op="按浏览器排序" to_port="example set input"/>
+          <connect from_op="按浏览器排序" from_port="example set output" to_op="按IP地址排序" to_port="example set input"/>
+          <connect from_op="按IP地址排序" from_port="example set output" to_op="添加上一个时间戳" to_port="example set input"/>
+          <connect from_op="添加上一个时间戳" from_port="example set output" to_op="添加上一个IP地址" to_port="example set input"/>
+          <connect from_op="添加上一个IP地址" from_port="example set output" to_op="添加上一个浏览器" to_port="example set input"/>
+          <connect from_op="添加上一个浏览器" from_port="example set output" to_op="添加访问编号" to_port="example set input"/>
+          <connect from_op="添加访问编号" from_port="example set output" to_op="添加访问ID" to_port="example set input"/>
+          <connect from_op="添加访问ID" from_port="example set output" to_op="删除过渡属性" to_port="example set input"/>
+          <connect from_op="删除过渡属性" from_port="example set output" to_port="out 1"/>
+          <portSpacing port="source_in 1" spacing="0"/>
+          <portSpacing port="source_in 2" spacing="0"/>
+          <portSpacing port="sink_out 1" spacing="0"/>
+          <portSpacing port="sink_out 2" spacing="0"/>
+        </process>
+      </operator>
+      <operator activated="true" class="misc:generate_aggregation_attribute" compatibility="5.2.000" expanded="true" height="76" name="统计访问请求数" width="90" x="715" y="30">
+        <parameter key="attribute_to_be_added" value="VisitActions"/>
+        <parameter key="attribute_to_be_aggregated" value="VisitID"/>
+        <parameter key="aggregation_function" value="count"/>
+        <enumeration key="attributes_for_making_groups">
+          <parameter key="nominal_attribute" value="VisitID"/>
+        </enumeration>
+      </operator>
+      <operator activated="true" class="subprocess" compatibility="5.3.013" expanded="true" height="76" name="识别访问者" width="90" x="849" y="30">
+        <process expanded="true">
+          <operator activated="true" class="sort" compatibility="5.3.013" expanded="true" height="76" name="按Cookie排序" width="90" x="45" y="30">
+            <parameter key="attribute_name" value="Cookie"/>
+            <parameter key="sorting_direction" value="increasing"/>
+          </operator>
+          <operator activated="true" class="misc:generate_offset_attribute" compatibility="5.2.000" expanded="true" height="76" name="添加上一个Cookie" width="90" x="179" y="30">
+            <parameter key="attribute_to_be_added" value="Cookie_up"/>
+            <parameter key="attribute_to_be_copied" value="Cookie"/>
+            <parameter key="offset_to_the_current_example" value="-1"/>
+            <enumeration key="attributes_for_making_groups"/>
+          </operator>
+          <operator activated="true" class="misc:generate_incremental_attribute" compatibility="5.2.000" expanded="true" height="76" name="添加访问者编号" width="90" x="313" y="30">
+            <parameter key="attribute_to_be_added" value="number"/>
+            <parameter key="incremental_value_expression" value="if(Cookie!=Cookie_up &amp;&amp; Cookie!=&quot;-&quot;, 1, 0)"/>
+            <enumeration key="attributes_for_making_groups"/>
+          </operator>
+          <operator activated="true" class="generate_attributes" compatibility="5.3.013" expanded="true" height="76" name="添加访问者ID" width="90" x="447" y="30">
+            <list key="function_descriptions">
+              <parameter key="VisitorID" value="if(Cookie!=&quot;-&quot;, concat(&quot;Visitor&quot;,str(number)), &quot;&quot;)"/>
+            </list>
+            <parameter key="use_standard_constants" value="true"/>
+            <parameter key="keep_all" value="true"/>
+          </operator>
+          <operator activated="true" class="select_attributes" compatibility="5.3.013" expanded="true" height="76" name="删除过渡属性 (2)" width="90" x="581" y="30">
+            <parameter key="attribute_filter_type" value="subset"/>
+            <parameter key="attribute" value=""/>
+            <parameter key="attributes" value="|Cookie_up|number"/>
+            <parameter key="use_except_expression" value="false"/>
+            <parameter key="value_type" value="attribute_value"/>
+            <parameter key="use_value_type_exception" value="false"/>
+            <parameter key="except_value_type" value="time"/>
+            <parameter key="block_type" value="attribute_block"/>
+            <parameter key="use_block_type_exception" value="false"/>
+            <parameter key="except_block_type" value="value_matrix_row_start"/>
+            <parameter key="invert_selection" value="true"/>
+            <parameter key="include_special_attributes" value="false"/>
+          </operator>
+          <connect from_port="in 1" to_op="按Cookie排序" to_port="example set input"/>
+          <connect from_op="按Cookie排序" from_port="example set output" to_op="添加上一个Cookie" to_port="example set input"/>
+          <connect from_op="添加上一个Cookie" from_port="example set output" to_op="添加访问者编号" to_port="example set input"/>
+          <connect from_op="添加访问者编号" from_port="example set output" to_op="添加访问者ID" to_port="example set input"/>
+          <connect from_op="添加访问者ID" from_port="example set output" to_op="删除过渡属性 (2)" to_port="example set input"/>
+          <connect from_op="删除过渡属性 (2)" from_port="example set output" to_port="out 1"/>
+          <portSpacing port="source_in 1" spacing="0"/>
+          <portSpacing port="source_in 2" spacing="0"/>
+          <portSpacing port="sink_out 1" spacing="0"/>
+          <portSpacing port="sink_out 2" spacing="0"/>
+        </process>
+      </operator>
+      <operator activated="true" class="write_csv" compatibility="5.3.013" expanded="true" height="76" name="保存访问信息文件" width="90" x="983" y="30">
+        <parameter key="csv_file" value="C:\du-work\商业智能\Chapter5\weblog_visit&amp;vistor.csv"/>
+        <parameter key="column_separator" value=";"/>
+        <parameter key="write_attribute_names" value="true"/>
+        <parameter key="quote_nominal_values" value="true"/>
+        <parameter key="format_date_attributes" value="false"/>
+        <parameter key="append_to_file" value="false"/>
+        <parameter key="encoding" value="SYSTEM"/>
+      </operator>
+      <connect from_op="读入网站日志" from_port="output" to_op="筛选重命名属性" to_port="in 1"/>
+      <connect from_op="筛选重命名属性" from_port="out 1" to_op="添加时间戳" to_port="example set input"/>
+      <connect from_op="添加时间戳" from_port="example set output" to_op="过滤主动发起请求" to_port="example set input"/>
+      <connect from_op="过滤主动发起请求" from_port="example set output" to_op="识别访问事件" to_port="in 1"/>
+      <connect from_op="识别访问事件" from_port="out 1" to_op="统计访问请求数" to_port="example set input"/>
+      <connect from_op="统计访问请求数" from_port="example set output" to_op="识别访问者" to_port="in 1"/>
+      <connect from_op="识别访问者" from_port="out 1" to_op="保存访问信息文件" to_port="input"/>
+      <connect from_op="保存访问信息文件" from_port="through" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+    </process>
+  </operator>
+</process>
