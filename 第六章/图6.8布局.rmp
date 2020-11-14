@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<process version="5.3.013">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="5.3.013" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="generate_transaction_data" compatibility="5.3.013" expanded="true" height="60" name="生成购物篮数据集" width="90" x="45" y="30">
+        <parameter key="number_transactions" value="10000"/>
+        <parameter key="number_customers" value="1000"/>
+        <parameter key="number_items" value="50"/>
+        <parameter key="number_clusters" value="10"/>
+        <parameter key="use_local_random_seed" value="true"/>
+        <parameter key="local_random_seed" value="1"/>
+      </operator>
+      <operator activated="true" class="read_csv" compatibility="5.3.013" expanded="true" height="60" name="读入商品列表文件" width="90" x="45" y="120">
+        <parameter key="csv_file" value="C:\dataset\商品列表.csv"/>
+        <parameter key="column_separators" value=","/>
+        <parameter key="trim_lines" value="false"/>
+        <parameter key="use_quotes" value="false"/>
+        <parameter key="quotes_character" value="&quot;"/>
+        <parameter key="escape_character" value="\"/>
+        <parameter key="skip_comments" value="false"/>
+        <parameter key="comment_characters" value="#"/>
+        <parameter key="parse_numbers" value="true"/>
+        <parameter key="decimal_character" value="."/>
+        <parameter key="grouped_digits" value="false"/>
+        <parameter key="grouping_character" value=","/>
+        <parameter key="date_format" value=""/>
+        <parameter key="first_row_as_names" value="false"/>
+        <list key="annotations"/>
+        <parameter key="time_zone" value="SYSTEM"/>
+        <parameter key="locale" value="English (United States)"/>
+        <parameter key="encoding" value="GBK"/>
+        <list key="data_set_meta_data_information">
+          <parameter key="0" value="Item.true.polynominal.attribute"/>
+          <parameter key="1" value="商品.true.polynominal.attribute"/>
+        </list>
+        <parameter key="read_not_matching_values_as_missings" value="true"/>
+        <parameter key="datamanagement" value="double_array"/>
+      </operator>
+      <operator activated="true" class="join" compatibility="5.3.013" expanded="true" height="76" name="合并商品名称" width="90" x="179" y="30">
+        <parameter key="remove_double_attributes" value="true"/>
+        <parameter key="join_type" value="inner"/>
+        <parameter key="use_id_attribute_as_key" value="false"/>
+        <list key="key_attributes">
+          <parameter key="Item" value="Item"/>
+        </list>
+        <parameter key="keep_both_join_attributes" value="false"/>
+      </operator>
+      <operator activated="true" class="misc:nominal_to_binominal_aggregation" compatibility="5.2.000" expanded="true" height="76" name="按事务二元化商品属性" width="90" x="313" y="30">
+        <parameter key="attribute_to_be_converted" value="商品"/>
+        <enumeration key="attributes_to_be_converted"/>
+        <parameter key="use_underscore_in_name" value="true"/>
+        <enumeration key="attributes_for_making_groups">
+          <parameter key="nominal_attribute" value="Id"/>
+        </enumeration>
+      </operator>
+      <operator activated="true" class="set_role" compatibility="5.3.013" expanded="true" height="76" name="事务id设成id角色" width="90" x="447" y="30">
+        <parameter key="attribute_name" value="Id"/>
+        <parameter key="target_role" value="id"/>
+        <list key="set_additional_roles"/>
+      </operator>
+      <operator activated="true" class="misc:flat_apriori" compatibility="5.2.000" expanded="true" height="76" name="挖掘频繁项集" width="90" x="581" y="30">
+        <parameter key="find_min_number_of_itemsets" value="false"/>
+        <parameter key="min_number_of_itemsets" value="100"/>
+        <parameter key="max_number_of_retries" value="15"/>
+        <parameter key="min_support_count" value="10"/>
+        <parameter key="min_support" value="0.01"/>
+        <parameter key="max_items" value="-1"/>
+        <parameter key="postive_value" value="true"/>
+        <list key="must_contain_either"/>
+      </operator>
+      <operator activated="true" class="create_association_rules" compatibility="5.3.013" expanded="true" height="76" name="生成关联规则" width="90" x="715" y="30">
+        <parameter key="criterion" value="confidence"/>
+        <parameter key="min_confidence" value="0.5"/>
+        <parameter key="min_criterion_value" value="0.8"/>
+        <parameter key="gain_theta" value="2.0"/>
+        <parameter key="laplace_k" value="1.0"/>
+      </operator>
+      <operator activated="true" class="write" compatibility="5.3.013" expanded="true" height="60" name="保存关联规则集" width="90" x="849" y="30">
+        <parameter key="object_file" value="C:\dataset\关联规则.ioo"/>
+        <parameter key="output_type" value="XML Zipped"/>
+        <parameter key="continue_on_error" value="false"/>
+      </operator>
+      <connect from_op="生成购物篮数据集" from_port="output" to_op="合并商品名称" to_port="left"/>
+      <connect from_op="读入商品列表文件" from_port="output" to_op="合并商品名称" to_port="right"/>
+      <connect from_op="合并商品名称" from_port="join" to_op="按事务二元化商品属性" to_port="example set input"/>
+      <connect from_op="按事务二元化商品属性" from_port="example set output" to_op="事务id设成id角色" to_port="example set input"/>
+      <connect from_op="事务id设成id角色" from_port="example set output" to_op="挖掘频繁项集" to_port="example set"/>
+      <connect from_op="挖掘频繁项集" from_port="frequent sets" to_op="生成关联规则" to_port="item sets"/>
+      <connect from_op="生成关联规则" from_port="rules" to_op="保存关联规则集" to_port="object"/>
+      <connect from_op="生成关联规则" from_port="item sets" to_port="result 2"/>
+      <connect from_op="保存关联规则集" from_port="object" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <portSpacing port="sink_result 3" spacing="0"/>
+    </process>
+  </operator>
+</process>
